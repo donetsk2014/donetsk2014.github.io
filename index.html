@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Волошкове поле | Noir Edition</title>
+    <meta name="description" content="Роман-репортаж. Хроніка деприватизації. Приватне стає публічним.">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Волошкове поле | Noir Edition">
+    <meta property="og:description" content="Роман-репортаж. Хроніка деприватизації. Інтерактивний архів.">
+    <meta property="og:image" content="https://placehold.co/1200x630/050505/d00000/png?text=VOLOSHKOVE+POLE">
+    
+    <!-- Favicon (Red Dot) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23c0392b%22/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prata&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Ruslan+Display&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    
+    <!-- Script -->
+    <script src="./script.js" defer></script>
+<link rel="stylesheet" href="/index.css">
+  <script type="module" crossorigin src="/assets/index-DGzyZDrs.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DfHC-V2u.css">
+</head>
+<body>
+
+    <!-- GLOBAL SVG FILTERS (Hidden) -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Paper Grain Filter -->
+            <filter id="paperRoughness">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+                <feDiffuseLighting in="noise" lighting-color="#fff" surfaceScale="1">
+                    <feDistantLight azimuth="45" elevation="60" />
+                </feDiffuseLighting>
+            </filter>
+            
+            <!-- Marker/Ink Distortion Filter -->
+            <filter id="markerDistort">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+
+            <!-- Grunge/Stamp Filter -->
+            <filter id="stampGrunge">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 5 -2" in="noise" result="coloredNoise"/>
+                <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="composite"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-content">
+            <span class="rec-dot-large">●</span>
+            <span class="loader-text">LOADING TAPE...</span>
+        </div>
+    </div>
+
+    <!-- Viewfinder Corners (Decoration) -->
+    <div class="viewfinder-corners"></div>
+
+    <!-- DYNAMIC SPOTLIGHT -->
+    <div class="spotlight" id="cursor-spotlight"></div>
+
+    <!-- Noise & Scanline Overlay -->
+    <div class="noise-overlay"></div>
+    <div class="vignette-overlay"></div>
+
+    <!-- Vertical Lines Decoration -->
+    <div class="grid-lines">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <div class="mobile-nav-content">
+            <a href="#synopsis" class="mobile-link" data-index="01">СЮЖЕТ</a>
+            <a href="#surveillance" class="mobile-link" data-index="02">ПРОТОКОЛ</a>
+            <a href="#locations" class="mobile-link" data-index="03">ПЛАКАТ</a>
+            <a href="#intercept" class="mobile-link" data-index="04">ЕФІР</a>
+            <a href="#fragments" class="mobile-link" data-index="05">АРХІВ</a>
+            <a href="#download" class="mobile-link" data-index="06">ОТРИМАТИ</a>
+            <div class="mobile-footer">
+                EST. 2014
+            </div>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="header-left">
+            <div class="logo">B.M<span class="accent-dot">.</span></div>
+            <div class="case-id desktop-only">CASE_2014</div>
+        </div>
+        
+        <!-- Live Timecode for Recording Aesthetic -->
+        <div class="header-center desktop-only">
+            <span class="rec-dot">●</span> <span id="header-timecode">00:00:00:00</span>
+        </div>
+
+        <div class="header-right">
+            <!-- Desktop Nav -->
+            <nav class="desktop-nav">
+                <a href="#synopsis">СЮЖЕТ</a>
+                <a href="#surveillance">ПРОТОКОЛ</a>
+                <a href="#locations">ПЛАКАТ</a>
+                <a href="#intercept">ЕФІР</a>
+                <a href="#fragments">АРХІВ</a>
+                <a href="#download">ОТРИМАТИ</a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="menu-toggle" id="menuToggle">
+                <span class="menu-label">MENU</span>
+                <div class="hamburger-icon">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-meta reveal-text">
+                    <span class="meta-item">EVIDENCE NO. 04</span>
+                    <span class="meta-separator">///</span>
+                    <span class="meta-item">LOCATION: <span class="redacted interactive-redacted">DONETSK</span></span>
+                </div>
+                
+                <h1 class="main-title">
+                    <div class="title-row reveal-left crt-flicker">ВОЛОШКОВЕ</div>
+                    <div class="title-row right reveal-right">ПОЛЕ</div>
+                </h1>
+
+                <div class="hero-footer reveal-up">
+                    <div class="hero-desc">
+                        <p class="typewriter-text">
+                            «Єдине, що потрібно для <span class="redacted-light">тріумфу зла</span>,<br>
+                            це щоб хороші люди нічого не робили.»
+                        </p>
+                    </div>
+                    <div class="stamp-box">
+                         CONFIDENTIAL // TOP SECRET
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-hint reveal-up">
+                <div class="mouse-icon">
+                    <div class="wheel"></div>
+                </div>
+                <div class="scroll-text">INVESTIGATE</div>
+            </div>
+
+            <div class="scroll-ticker">
+                <div class="ticker-track">
+                    <div class="ticker-content">
+                        ХРОНІКА ДЕПРИВАТИЗАЦІЇ ✦ ПРИВАТНЕ СТАЄ ПУБЛІЧНИМ ✦ ТИША ГУЧНІША ЗА ВИБУХИ ✦ ХРОНІКА ДЕПРИВАТИЗАЦІЇ ✦
+                    </div>
+                    <div class="ticker-content">
+                        ХРОНІКА ДЕПРИВАТИЗАЦІЇ ✦ ПРИВАТНЕ СТАЄ ПУБЛІЧНИМ ✦ ТИША ГУЧНІША ЗА ВИБУХИ ✦ ХРОНІКА ДЕПРИВАТИЗАЦІЇ ✦
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Synopsis -->
+        <section id="synopsis" class="synopsis-section scroll-reveal">
+            <div class="container relative">
+                <div class="section-marker">ACT I // THE CONTEXT</div>
+                <h2 class="section-title">Приватність<br>vs Приватизація</h2>
+                
+                <div class="text-block">
+                    <p>
+                        <span class="drop-cap">Н</span>а жаль, сфера життєвих інтересів, емоцій і прив’язаностей окремої приватної особи стала першою жертвою війни, розв’язаної на вулицях нашого міста навесні 2014 року. Саме тоді наше персональне майбутнє повністю опинилося в залежності від настроїв бандитів.
+                    </p>
+                    <p>
+                        Спочатку вони викрадали політиків місцевого рівня. Згодом переключилися на священнослужителів, банкірів, видавців і просто випадкових перехожих. А далі вони почали розщеплювати наші емоції, вбивати наші прив’язаності й забирати життя.
+                    </p>
+                    <p>
+                        Маховик війни розкручувався швидше, ніж професійне прагнення зупинити відверті акти насильства над громадянським суспільством. У героїв нашого роману є вибір: продовжувати роботу в умовах, що зводять результат до нуля, або забути про все.
+                    </p>
+                    <div class="quote-insert">
+                        «Конфіденційність захищає нас від <span class="redacted interactive-redacted" title="Натисніть">зловживань владою</span>, навіть якщо ми не робимо нічого поганого.»
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SURVEILLANCE: The Dossier -->
+        <section id="surveillance" class="surveillance-section">
+            <div class="container">
+                <div class="section-marker">ARCHIVE // KGB_LOGS</div>
+                <h2 class="section-title">Доповідна<br>Записка</h2>
+                
+                <div class="folder-container scroll-reveal" id="dossier-folder">
+                    <!-- The Paper Sheet -->
+                    <div class="paper-sheet realistic-paper">
+                        
+                        <!-- Watermark -->
+                        <div class="paper-watermark">TOP SECRET</div>
+
+                        <!-- Photo Attachment (Parallax Target) -->
+                        <div class="photo-attachment parallax-target" data-speed="20">
+                            <div class="paper-clip-visual"></div>
+                            <img src="https://placehold.co/120x150/222/555?text=?" alt="Suspect" class="mugshot">
+                            <div class="photo-stamp">ОСОБА_1</div>
+                            <div class="photo-evidence-stamp">EVIDENCE</div>
+                        </div>
+
+                        <div class="paper-header">
+                            <div class="soviet-stamp-box">
+                                <div class="stamp-border">
+                                    <span>ЦІЛКОМ ТАЄМНО</span>
+                                    <span class="stamp-date">26.05.2014</span>
+                                </div>
+                            </div>
+                            <div class="doc-title ink-text">
+                                ПРОТОКОЛ СПОСТЕРЕЖЕННЯ № 404/B<br>
+                                <span class="sub-title">ОПЕРАЦІЯ "ВОЛОШКОВЕ ПОЛЕ"</span>
+                            </div>
+                        </div>
+
+                        <!-- Subject Profile Grid -->
+                        <div class="profile-grid ink-text">
+                            <div class="p-row">
+                                <span class="p-label">КОДОВЕ ІМ'Я:</span>
+                                <span class="p-val"><span class="redacted interactive-redacted" title="Click to reveal">АРХІТЕКТОР</span></span>
+                            </div>
+                            <div class="p-row">
+                                <span class="p-label">СТАТУС:</span>
+                                <span class="p-val">АКТИВНИЙ // ПІД НАГЛЯДОМ</span>
+                            </div>
+                            <div class="p-row">
+                                <span class="p-label">ЛОКАЦІЯ:</span>
+                                <span class="p-val">СЕКТОР Д, 48.0159° N</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashed-separator"></div>
+
+                        <div class="typewriter-body ink-text">
+                            <div class="log-row">
+                                <span class="time-stamp">05:38</span>
+                                <span class="log-text">ЗАФІКСОВАНО ВИБУХ. ПЕРИМЕТР ПОРУШЕНО.</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">05:42</span>
+                                <span class="log-text">Об'єкт (група осіб) рухається на північ. Пішки. Засоби зв'язку відключено.</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">12:15</span>
+                                <span class="log-text">
+                                    Агентурне повідомлення: Об'єкт намагався зв'язатися з <span class="redacted interactive-redacted">НЕВІДОМИМ</span> через таксофон.
+                                </span>
+                            </div>
+                            <div class="log-row highlight-marker">
+                                <span class="time-stamp">17:45</span>
+                                <span class="log-text">ВІЗУАЛЬНИЙ КОНТАКТ. БУЛЬВАР ШЕВЧЕНКА, 26.</span>
+                                <span class="margin-note">!</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">18:10</span>
+                                <span class="log-text">Встановлено зовнішнє спостереження. Точка "Котедж".</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">20:30</span>
+                                <span class="log-text">Прибуття транспорту. 2 од. Вантажівки (КАМАЗ). Особовий склад: ~40.</span>
+                            </div>
+                            <div class="log-row crossed-out">
+                                <span class="time-stamp">20:45</span>
+                                <span class="log-text">Ситуація під контролем. Втручання не потрібне.</span>
+                            </div>
+                            <div class="log-row handwritten-note">
+                                <span class="time-stamp">-></span>
+                                <span class="log-text" style="color: #c00;">Увага: Об'єкт озброєний. ПГ-7 в наявності. Діяти обережно.</span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">22:00</span>
+                                <span class="log-text">
+                                    АНАЛІЗ: Імовірність прориву оточення становить <span class="redacted interactive-redacted">85%</span>. 
+                                    Рекомендовано посилити пости на виїздах з міста.
+                                </span>
+                            </div>
+                            <div class="log-row">
+                                <span class="time-stamp">23:15</span>
+                                <span class="log-text">ВТРАТА СИГНАЛУ. ОБ'ЄКТ ВИЙШОВ З ЕФІРУ.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashed-separator"></div>
+                        
+                        <!-- Curator Note -->
+                        <div class="curator-note handwritten">
+                            <p>Резолюція: Продовжити спостереження. Доповідати особисто кожні 2 години.</p>
+                        </div>
+
+                        <div class="paper-footer">
+                            <div class="signature-block">
+                                <div class="fingerprint">
+                                    <svg viewBox="0 0 100 100" width="60" height="60" opacity="0.6">
+                                        <path d="M50,10 Q80,10 80,40 T50,70 T20,40 T50,10 M50,20 Q70,20 70,40 T50,60 T30,40 T50,20" fill="none" stroke="#2a2a50" stroke-width="2" />
+                                        <path d="M50,5 Q90,5 90,45 T50,85 T10,45 T50,5" fill="none" stroke="#2a2a50" stroke-width="1" />
+                                        <path d="M40,90 L60,90" fill="none" stroke="#2a2a50" stroke-width="3" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    Підпис: <span class="handwritten ink-text">Майор <span class="redacted interactive-redacted">К.Д.Б</span></span>
+                                </div>
+                            </div>
+                            <div class="stamp-seal">
+                                <div class="circle-seal">
+                                    <span>ВІДДІЛ</span>
+                                    <span>№4</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Extra Realism Decors -->
+                        <div class="coffee-stain"></div>
+                        <div class="paper-texture-overlay"></div>
+                    </div>
+                    
+                    <div class="folder-tab">СПРАВА № 2014 // ТОМ 1</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAP: Constructivist Propaganda Poster -->
+        <section id="locations" class="map-section">
+            <div class="container">
+                <div class="header-row scroll-reveal">
+                    <div class="section-marker">TACTICAL // PLAN_A</div>
+                    <h2 class="section-title text-right">Карта<br>Дій</h2>
+                </div>
+                
+                <div class="poster-wrapper scroll-reveal">
+                    <div class="constructivist-poster map-realistic">
+                        
+                        <!-- Fold Lines (Overlay) -->
+                        <div class="map-folds"></div>
+                        
+                        <!-- Radar Sweep -->
+                        <div class="radar-sweep"></div>
+
+                        <!-- Header Strip -->
+                        <div class="poster-header-strip">
+                            <span>СХЕМА ОПЕРАТИВНОГО РОЗГОРТАННЯ</span>
+                            <span class="poster-date">ТРАВЕНЬ '14</span>
+                        </div>
+
+                        <!-- Poster Border & Grid -->
+                        <div class="poster-border-inner"></div>
+
+                        <!-- Interactive Tooltip (Floating) -->
+                        <div id="map-tooltip" class="map-tooltip"></div>
+                        
+                        <!-- Main Map Graphics -->
+                        <svg class="poster-svg" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                             <defs>
+                                <pattern id="hatchRed" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                                    <rect width="4" height="8" fill="#c0392b" opacity="0.4" />
+                                </pattern>
+                                <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#333" stroke-width="0.5" opacity="0.3"/>
+                                </pattern>
+                                <marker id="arrowHead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#c0392b" />
+                                </marker>
+                                <marker id="arrowHeadBlack" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+                                </marker>
+                            </defs>
+                            
+                            <!-- Background Grid -->
+                            <rect width="100%" height="100%" fill="url(#gridPattern)" />
+
+                            <!-- Coffee Stain on Map -->
+                            <g opacity="0.4" style="mix-blend-mode: multiply;">
+                                <path d="M680,450 Q720,440 730,480 Q740,520 700,530 Q660,540 650,500 Q640,460 680,450" fill="none" stroke="#5a3a2a" stroke-width="5" stroke-dasharray="100, 30" filter="url(#markerDistort)"/>
+                                <path d="M680,450 Q720,440 730,480 Q740,520 700,530 Q660,540 650,500 Q640,460 680,450" fill="none" stroke="#5a3a2a" stroke-width="15" opacity="0.2" filter="url(#markerDistort)"/>
+                            </g>
+
+                            <!-- Topography / City Blocks (Abstract Complex Shapes) -->
+                            <g fill="#dcd6c5" stroke="#333" stroke-width="1" opacity="0.8">
+                                <path d="M50,100 L200,80 L250,200 L100,220 Z" />
+                                <path d="M300,50 L550,50 L500,150 L320,150 Z" />
+                                <path d="M600,100 L750,80 L780,250 L620,300 L580,200 Z" />
+                                <path d="M50,300 L200,280 L220,400 L80,420 Z" />
+                                <path d="M300,450 L500,450 L550,550 L250,550 Z" />
+                            </g>
+                            
+                            <!-- Exclusion Zones (Radar Circles) -->
+                            <circle class="interactive-map-element zone" data-label="ЗОНА ВІДЧУЖЕННЯ // РАДІУС 1" cx="400" cy="300" r="150" fill="transparent" stroke="#c0392b" stroke-width="1" stroke-dasharray="5,5" filter="url(#markerDistort)" />
+                            <circle cx="400" cy="300" r="250" fill="none" stroke="#333" stroke-width="0.5" opacity="0.3" />
+                            
+                            <!-- Danger Zone (Hatched Polygon) -->
+                            <path id="danger-zone-poly" class="interactive-map-element zone-danger" data-label="СЕКТОР ОБСТРІЛУ // НЕБЕЗПЕКА" data-type="warning" d="M350,250 L450,200 L500,350 L300,400 Z" fill="url(#hatchRed)" stroke="#c0392b" stroke-width="2" filter="url(#markerDistort)" />
+                            
+                            <!-- Tactical Roads (Main Arteries) -->
+                            <path class="interactive-map-element road" data-label="ТРАСА Н-20 // ВХІД" d="M0,50 Q200,100 400,300 T800,550" fill="none" stroke="#1a1a1a" stroke-width="8" opacity="0.8" filter="url(#markerDistort)"/>
+                            <path d="M0,50 Q200,100 400,300 T800,550" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="15,10" pointer-events="none"/>
+
+                            <path class="interactive-map-element road" data-label="МАРШРУТ 02 // РЕЗЕРВ" d="M800,100 Q600,200 400,300 T0,400" fill="none" stroke="#555" stroke-width="4" stroke-dasharray="10,5" filter="url(#markerDistort)"/>
+
+                            <!-- NEW INTERACTIVE TACTICAL MARKERS -->
+                            <g class="interactive-map-element tactical-point" data-type="info" data-title="CHECKPOINT ALPHA" data-desc="Entry controlled by armed forces. Documents required." transform="translate(180, 80)">
+                                <circle r="15" fill="rgba(255, 255, 255, 0.1)" stroke="none" class="pulse-ring" />
+                                <circle r="6" fill="#111" stroke="#fff" stroke-width="2" />
+                            </g>
+                            
+                            <g class="interactive-map-element tactical-point" data-type="info" data-title="SUPPLY LINE" data-desc="Heavy vehicle movement reported at 02:00." transform="translate(620, 180)">
+                                <circle r="15" fill="rgba(255, 255, 255, 0.1)" stroke="none" class="pulse-ring" style="animation-delay: 0.5s"/>
+                                <circle r="6" fill="#111" stroke="#fff" stroke-width="2" />
+                            </g>
+
+                             <g class="interactive-map-element tactical-point" data-type="info" data-title="FORWARD BASE" data-desc="Temporary encampment. Activity high." transform="translate(350, 480)">
+                                <circle r="15" fill="rgba(255, 255, 255, 0.1)" stroke="none" class="pulse-ring" style="animation-delay: 1s"/>
+                                <circle r="6" fill="#111" stroke="#fff" stroke-width="2" />
+                            </g>
+
+                            <!-- Invasion Arrows (Tactical Movements) - Apply Distortion -->
+                            <path d="M400,50 L400,180" fill="none" stroke="#c0392b" stroke-width="6" marker-end="url(#arrowHead)" pointer-events="none" filter="url(#markerDistort)" opacity="0.9"/>
+                            <path d="M700,400 Q600,400 520,360" fill="none" stroke="#000" stroke-width="4" marker-end="url(#arrowHeadBlack)" pointer-events="none" filter="url(#markerDistort)" opacity="0.9"/>
+                            
+                            <!-- Target Markers (Visual only) -->
+                            <g transform="translate(400, 300)" pointer-events="none">
+                                <circle r="10" fill="none" stroke="#c0392b" stroke-width="2" />
+                                <line x1="-15" y1="0" x2="15" y2="0" stroke="#c0392b" stroke-width="2" />
+                                <line x1="0" y1="-15" x2="0" y2="15" stroke="#c0392b" stroke-width="2" />
+                            </g>
+                            
+                            <g transform="translate(200, 150)" pointer-events="none">
+                                <text x="0" y="0" font-family="monospace" font-size="10" fill="#000">SECTOR_A</text>
+                                <circle r="5" fill="#000" />
+                            </g>
+                            
+                             <g transform="translate(650, 250)" pointer-events="none">
+                                <text x="0" y="0" font-family="monospace" font-size="10" fill="#000">BLOCK_09</text>
+                                <rect x="-5" y="-5" width="10" height="10" fill="none" stroke="#000" />
+                            </g>
+
+                        </svg>
+
+                        <!-- READABLE LABELS (Stickers) -->
+                        <div class="poster-sticker" style="top: 15%; left: 5%;">
+                            <div class="sticker-num">01</div>
+                            <div class="sticker-content">
+                                <div class="sticker-title">ТРАСА Н-20</div>
+                                <div class="sticker-sub">ВХІД ГРУПИ</div>
+                            </div>
+                        </div>
+
+                        <div class="poster-sticker danger" style="top: 45%; left: 45%;">
+                            <div class="sticker-num">02</div>
+                            <div class="sticker-content">
+                                <div class="sticker-title">АРЕНА «ДРУЖБА»</div>
+                                <div class="sticker-sub">ШТАБ СЕКТОРУ</div>
+                            </div>
+                             <div class="sticker-line" style="transform: rotate(45deg); width: 60px; left: -40px; top: -20px;"></div>
+                        </div>
+
+                        <div class="poster-sticker" style="top: 25%; left: 75%;">
+                            <div class="sticker-num">03</div>
+                            <div class="sticker-content">
+                                <div class="sticker-title">МАРІУПОЛЬ</div>
+                                <div class="sticker-sub">ТИЛОВЕ ЗАБЕЗПЕЧЕННЯ</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Geometric Shapes (Decor) -->
+                        <div class="geo-circle"></div>
+                        <div class="geo-triangle"></div>
+
+                        <!-- Legend Box -->
+                        <div class="poster-legend-box">
+                            <div class="legend-title">УМОВНІ ПОЗНАЧЕННЯ</div>
+                            <div class="legend-grid">
+                                <div class="l-item">
+                                    <span class="l-icon line-black"></span>
+                                    <span>МАРШРУТ РУХУ</span>
+                                </div>
+                                <div class="l-item">
+                                    <span class="l-icon hatch-red"></span>
+                                    <span>ЗОНА РИЗИКУ</span>
+                                </div>
+                                <div class="l-item">
+                                    <span class="l-icon circle-dot"></span>
+                                    <span>ЦІЛЬ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Big Stamp -->
+                        <div class="poster-big-stamp">
+                            СХВАЛЕНО<br>
+                            <span class="stamp-id">НАЧ. ШТАБУ</span>
+                        </div>
+                        
+                        <!-- Constructivist Compass -->
+                        <div class="poster-compass">
+                            <div class="compass-n">N</div>
+                            <div class="compass-arrow"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE: Radio Intercept -->
+        <section id="intercept" class="intercept-section">
+            <div class="container">
+                <div class="header-row scroll-reveal">
+                    <div class="section-marker">SIGINT // FREQUENCY</div>
+                    <h2 class="section-title">Радіо<br>Перехоплення</h2>
+                </div>
+
+                <div class="radio-wrapper scroll-reveal">
+                    <!-- Oscilloscope Visualizer -->
+                    <div class="screen-border">
+                        <canvas id="oscillator" width="800" height="200"></canvas>
+                        <div class="screen-overlay"></div>
+                    </div>
+                    
+                    <!-- Controls -->
+                    <div class="radio-controls">
+                        <div class="frequency-display">
+                            <span id="freq-val">88.0</span> <span class="unit">MHz</span>
+                        </div>
+                        
+                        <div class="tuner-container">
+                             <input type="range" id="tuner" min="88" max="108" step="0.02" value="88">
+                             <div class="tuner-scale">
+                                 <span>88</span><span>92</span><span>96</span><span>100</span><span>104</span><span>108</span>
+                             </div>
+                        </div>
+
+                        <!-- NEW AUDIO TOGGLE -->
+                        <button id="audio-toggle" class="audio-btn">[ УВІМКНУТИ ЗВУК ]</button>
+                        
+                        <div class="signal-strength">
+                            <div class="signal-label">SIGNAL:</div>
+                            <div class="signal-bars">
+                                <div class="bar" id="bar1"></div>
+                                <div class="bar" id="bar2"></div>
+                                <div class="bar" id="bar3"></div>
+                                <div class="bar" id="bar4"></div>
+                                <div class="bar" id="bar5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decoded Transcript -->
+                    <div class="transcript-box">
+                        <div class="transcript-header">/// DECODED MESSAGE ///</div>
+                        <div id="transcript-text" class="transcript-content">
+                            [ ШУКАЙТЕ ЧАСТОТУ ДЛЯ ОТРИМАННЯ ДАНИХ ]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FRAGMENTS: KGB Card Index (Kartoteka) -->
+        <section id="fragments" class="fragments-section">
+            <div class="container">
+                <div class="header-row scroll-reveal">
+                    <div class="section-marker">ACT II // THE CHRONICLES</div>
+                    <h2 class="section-title">Архівна<br>Картотека</h2>
+                </div>
+
+                <div class="cards-container">
+                    
+                    <!-- Card 1 -->
+                    <div class="index-card scroll-reveal">
+                        <!-- Decorative Hole Punch -->
+                        <div class="hole-punch"></div>
+                        <div class="paper-clip-top"></div>
+
+                        <div class="card-header-row">
+                            <div class="card-meta-block">
+                                <span class="meta-label">FILE NO:</span>
+                                <span class="meta-value">001-A</span>
+                            </div>
+                            <div class="card-meta-block">
+                                <span class="meta-label">DATE:</span>
+                                <span class="meta-value">05.05.2014</span>
+                            </div>
+                            <div class="card-stamp-box">ARCHIVED</div>
+                        </div>
+                        
+                        <div class="card-divider"></div>
+
+                        <div class="card-content-body">
+                            <h3 class="card-headline">ТРАСА Н-20</h3>
+                            <p class="card-text-typewriter">
+                                Ми їхали абсолютно знайомою для нас трасою. Дорога з Маріуполя до Донецька займає трохи більше години.
+                            </p>
+                            <div class="hidden-content">
+                                Порожній шлях і чудовий світанок, який на під’їзді до міста чітко розділяв трасу на схід і захід, обіцяв уразити нас черговим спекотним травневим днем. Схід сонця мав у нашому житті суттєве значення.
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="index-card scroll-reveal">
+                        <div class="hole-punch"></div>
+                        
+                        <div class="card-header-row">
+                            <div class="card-meta-block">
+                                <span class="meta-label">FILE NO:</span>
+                                <span class="meta-value">002-B</span>
+                            </div>
+                             <div class="card-meta-block">
+                                <span class="meta-label">SUB:</span>
+                                <span class="meta-value">ВАНДАЛІЗМ</span>
+                            </div>
+                            <div class="card-stamp-box red">COPY</div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="card-content-body">
+                            <h3 class="card-headline">СКЛО І МЕТАЛ</h3>
+                            <p class="card-text-typewriter">
+                                Першими «жертвами» вандалів стали банкомати. За одну добу в центрі Донецька невідомі розтрощили десять апаратів.
+                            </p>
+                            <div class="hidden-content">
+                                Причому гроші хуліганів не цікавили — обладнання просто нищили й утікали. Робили все ніби напоказ. На одному із записів видно, як двоє хлопців надягають балаклави й починають бити екран.
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="index-card scroll-reveal">
+                         <div class="hole-punch"></div>
+                         <div class="paper-clip-top" style="left: 60%;"></div>
+
+                        <div class="card-header-row">
+                            <div class="card-meta-block">
+                                <span class="meta-label">LOC:</span>
+                                <span class="meta-value">ХОРОШОВО</span>
+                            </div>
+                             <div class="card-stamp-box">SECRET</div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="card-content-body">
+                            <h3 class="card-headline">МІРАЖ «ХОРОШОВО»</h3>
+                            <p class="card-text-typewriter">
+                                Котеджне містечко «Хорошово» й справді скидалося на казкове місто, мешканців якого забрали інопланетяни.
+                            </p>
+                            <div class="hidden-content">
+                                Навколо — жодної душі. Коли розвиднілося, ми зрозуміли, чому сюди сунулися бойовики. Класичне глухе місце. Чудова база для тренувань... Але вони обрали це місце для інших цілей.
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
+                    </div>
+
+                     <!-- Card 4 -->
+                    <div class="index-card scroll-reveal">
+                         <div class="hole-punch"></div>
+
+                        <div class="card-header-row">
+                            <div class="card-meta-block">
+                                <span class="meta-label">OBJ:</span>
+                                <span class="meta-value">КІНОТЕАТР</span>
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="card-content-body">
+                            <h3 class="card-headline">КІНОТЕАТР ШЕВЧЕНКА</h3>
+                            <p class="card-text-typewriter">
+                                У денному прокаті саме йшов повторний показ фільму «Залягти на дно в Брюгге»...
+                            </p>
+                            <div class="hidden-content">
+                                У залі майже нікого не було. Хіба що — пара чарівних літніх «бегемотів» на другому чи третьому ряду. Спочатку мені було дуже нудно. Але згодом я втягнувся.
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
+                    </div>
+
+                     <!-- Card 5 -->
+                    <div class="index-card scroll-reveal">
+                         <div class="hole-punch"></div>
+
+                        <div class="card-header-row">
+                            <div class="card-meta-block">
+                                <span class="meta-label">FILE NO:</span>
+                                <span class="meta-value">FINAL_05</span>
+                            </div>
+                             <div class="card-stamp-box red">BURNED</div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="card-content-body">
+                            <h3 class="card-headline">ЕПІЛОГ</h3>
+                            <p class="card-text-typewriter">
+                                Дорогі працівники донецького ПриватБанку, іноді вогонь — найкращий засіб для припікання болю.
+                            </p>
+                            <div class="hidden-content">
+                                Акт спалення нашого з вами місця роботи символічний, але саме цього нам тоді хотілося. Усе тільки починається. 26 травня 2014 року, 23:54.
+                            </div>
+                        </div>
+                        
+                        <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Download / Timer / Epilogue -->
+        <section id="download" class="subscribe-section scroll-reveal">
+            <div class="container centered-layout">
+                <div class="section-marker">STATUS // ARCHIVED</div>
+                <h2 class="section-title mobile-center">Матеріали<br>Справи</h2>
+                
+                <div class="form-wrapper">
+                    <div class="archive-image-wrapper">
+                         <div class="glitch-container">
+                            <img src="https://placehold.co/400x600/0a0a0a/d00000/png?text=TOP+SECRET" 
+                                 alt="Archived Case File" 
+                                 class="archive-image" 
+                                 loading="lazy" 
+                                 decoding="async" 
+                                 width="400" 
+                                 height="600">
+                            <div class="glitch-layer"></div>
+                            <div class="glitch-layer"></div>
+                         </div>
+                    </div>
+                    
+                    <p class="mono-desc">ПОВНА ВЕРСІЯ: 124 СТОРІНКИ</p>
+                    
+                    <div class="countdown-wrapper">
+                        <div class="countdown-header">ЧАС ДО ДЕКЛАСИФІКАЦІЇ:</div>
+                        <div id="countdown" class="countdown-display">
+                            <div class="time-unit"><span class="number" id="days">00</span><span class="label">ДНІВ</span></div>
+                            <div class="separator">:</div>
+                            <div class="time-unit"><span class="number" id="hours">00</span><span class="label">ГОД</span></div>
+                            <div class="separator">:</div>
+                            <div class="time-unit"><span class="number" id="minutes">00</span><span class="label">ХВ</span></div>
+                            <div class="separator">:</div>
+                            <div class="time-unit"><span class="number" id="seconds">00</span><span class="label">СЕК</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Direct GitHub Download Link (Placeholder) -->
+                    <a href="https://github.com/v-munister/voloshkove-pole/archive/refs/heads/main.zip" class="download-btn">
+                        <span class="btn-text">[ ЗАВАНТАЖИТИ МАТЕРІАЛИ ]</span>
+                        <span class="btn-hover-effect"></span>
+                    </a>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: DONATE SECTION -->
+        <section id="donate" class="donate-section">
+            <div class="container">
+                <div class="donate-card scroll-reveal">
+                    <div class="donate-header">ВИТРАТИ НА РОЗСЛІДУВАННЯ</div>
+                    <p>Незалежність коштує дорого. Ваша підтримка дозволяє нам продовжувати роботу.</p>
+                    <a href="https://send.monobank.ua/jar/4geL7Q9ETM" target="_blank" class="donate-btn">
+                        <span>[ ПІДТРИМАТИ (MONOBANK) ]</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>© 2024 VOLOSHKOVE POLE.</div>
+            <div class="text-right">NOIR EDITION ✦ CASE 2014</div>
+        </div>
+    </footer>
+
+    <!-- NEW: Intel Modal for Map Interactions -->
+    <div id="intel-modal" class="intel-modal-overlay">
+        <div class="intel-modal-box">
+            <div class="intel-header">
+                <span class="intel-type" id="intel-type-label">INFO</span>
+                <button class="intel-close" id="intel-close-btn">[ X ]</button>
+            </div>
+            <div class="intel-body">
+                <h3 id="intel-title" class="intel-title">TITLE</h3>
+                <p id="intel-desc" class="intel-desc">Description text...</p>
+            </div>
+            <div class="intel-footer">
+                <span id="intel-stamp">CONFIRMED // 2014</span>
+                <div class="intel-scanlines"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
