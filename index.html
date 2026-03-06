@@ -113,7 +113,6 @@
                 '👤 *ПІБ:* ' + (form.fio?.value || '—') + '\n' +
                 '📱 *Телефон:* ' + (form.phone?.value || '—') + '\n' +
                 '📮 *НП:* ' + npBranch + '\n' +
-                '📍 *Адреса:* ' + (form.address?.value || '—') + '\n' +
                 '💬 *Viber/WhatsApp:* ' + (form.contact?.value || '—') + '\n' +
                 '💰 *Донат:* ' + donation + ' грн\n\n' +
                 '_Книги: ' + books + ' + доставка ' + shipping + ' + донат ' + donation + ' = ' + total + ' грн_\n' +
@@ -358,10 +357,6 @@
                                 <label for="order-np-city">Місто *</label>
                                 <input type="text" id="order-np-city" name="np_city" required placeholder="Київ">
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <label for="order-address">Адреса (якщо адресна доставка)</label>
-                            <input type="text" id="order-address" name="address" placeholder="Вулиця, будинок, квартира">
                         </div>
                         <div class="form-row">
                             <label for="order-contact">Viber / WhatsApp</label>
