@@ -25,10 +25,12 @@
     <!-- Order Form Styles -->
     <style>
     .order-section-beige { background: #e8e4d8; color: #2c2a26; padding: 80px 24px 100px; }
-    .order-section-beige .container.centered-layout { max-width: 960px; }
+    .order-section-beige .container.centered-layout { max-width: 920px; margin: 0 auto; padding: 0 32px; text-align: center; }
     .order-section-beige .section-marker { color: #8b7355; font-size: .7rem; letter-spacing: .3em; margin-bottom: 16px; }
     .order-section-beige .section-title { color: #1a1816; font-family: var(--font-headers); font-size: 2.5rem; font-weight: 400; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 48px; }
-    .order-section-flex { display: grid; grid-template-columns: 320px 1fr; gap: 64px; align-items: start; max-width: 900px; margin: 0 auto; }
+    .order-section-flex { display: grid; grid-template-columns: 320px 400px; gap: 56px; align-items: start; justify-content: center; margin: 0 auto; text-align: left; width: 100%; }
+    .order-product-card { width: 320px; }
+    .order-form { width: 100%; min-width: 0; }
     .order-product-card { position: sticky; top: 100px; }
     .order-product-img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,.1); display: block; aspect-ratio: 3/4; object-fit: cover; }
     .order-product-info { margin-top: 28px; }
@@ -56,11 +58,16 @@
         .order-section-beige .section-title { font-size: 3rem; margin-bottom: 56px; }
         .order-product-details { font-size: 1rem; }
     }
+    @media (max-width: 860px) {
+        .order-section-flex { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+        .order-product-card { width: 100%; max-width: 320px; margin: 0 auto; }
+    }
     @media (max-width: 700px) {
         .order-section-beige { padding: 48px 20px 64px; }
+        .order-section-beige .container.centered-layout { padding: 0 20px; }
         .order-section-beige .section-title { font-size: 2rem; margin-bottom: 36px; }
-        .order-section-flex { grid-template-columns: 1fr; gap: 40px; }
-        .order-product-card { position: static; max-width: 280px; margin: 0 auto; }
+        .order-section-flex { gap: 40px; max-width: 100%; }
+        .order-product-card { position: static; max-width: 280px; }
         .order-form { padding: 28px 22px; }
         .order-form input { font-size: 16px; min-height: 48px; padding: 14px 18px; }
         .order-form .form-row-inline { grid-template-columns: 1fr; }
