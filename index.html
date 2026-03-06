@@ -38,7 +38,34 @@
     .order-message.success { color: #0f0; }
     .order-message.error { color: var(--accent); }
     </style>
-    <!-- Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('order-form');
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = form.getAttribute('data-email') || '';
+            if (!email || email === 'YOUR_EMAIL') {
+                alert('Налаштуйте data-email у формі');
+                return;
+            }
+            var body = [
+                'ПІБ: ' + (form.fio?.value || ''),
+                'Телефон: ' + (form.phone?.value || ''),
+                'Відділення НП: ' + (form.np_branch?.value || ''),
+                'Адреса: ' + (form.address?.value || ''),
+                'Viber/WhatsApp: ' + (form.contact?.value || ''),
+                'Донат: ' + (form.querySelector('[name="donation"]')?.value || 0) + ' грн',
+                '',
+                'Сума: 200 + ' + (form.querySelector('[name="donation"]')?.value || 0) + ' = ' + (200 + parseInt(form.querySelector('[name="donation"]')?.value || 0, 10)) + ' грн'
+            ].join('\n');
+            var subject = 'Замовлення — Волошкове поле';
+            location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            var msg = document.getElementById('order-message');
+            if (msg) { msg.textContent = 'Відкрийте пошту та надішліть лист.'; msg.className = 'order-message success'; }
+        });
+    });
+    </script>
 <link rel="stylesheet" href="/index.css">
   <script type="module" crossorigin src="/assets/index-DGzyZDrs.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-DfHC-V2u.css">
@@ -776,10 +803,8 @@
                     <p class="order-donation">+ Донат (від 1 грн) до суми — або без</p>
                     <p class="order-note">Примітка: Відправка пакетна за тиражами протягом 7 днів.</p>
                     
-                    <!-- formspree.io: створіть форму, замініть YOUR_FORM_ID -->
-                    <form id="order-form" class="order-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                        <input type="hidden" name="_subject" value="Нове замовлення — Волошкове поле">
-                        <input type="hidden" name="_next" value="https://donetsk2014.github.io/#order-success">
+                    <!-- Замініть YOUR_EMAIL на вашу пошту для отримання замовлень -->
+                    <form id="order-form" class="order-form" data-email="YOUR_EMAIL">
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові">
