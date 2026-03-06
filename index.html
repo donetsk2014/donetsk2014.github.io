@@ -22,8 +22,23 @@
     
     <!-- Styles -->
     
+    <!-- Order Form Styles -->
+    <style>
+    .order-price { font-size: 1.2rem; color: var(--accent); margin: 10px 0; }
+    .order-donation, .order-note { font-size: .9rem; color: #888; margin: 5px 0; }
+    .order-form { max-width: 400px; margin: 30px auto 0; text-align: left; }
+    .order-form .form-row { margin-bottom: 15px; }
+    .order-form label { display: block; font-size: .75rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .1em; }
+    .order-form input { width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; font-family: var(--font-mono); font-size: .95rem; }
+    .order-form input:focus { outline: none; border-color: var(--accent); }
+    .order-form input::placeholder { color: #555; }
+    .order-submit-btn { margin-top: 20px; cursor: pointer; display: inline-block; padding: 15px 40px; border: 1px solid #fff; color: #fff; font-family: var(--font-mono); position: relative; overflow: hidden; transition: all .3s ease; background: transparent; font-size: inherit; }
+    .order-submit-btn:hover { background: #fff; color: #000; }
+    .order-message { margin-top: 15px; font-size: .9rem; min-height: 20px; }
+    .order-message.success { color: #0f0; }
+    .order-message.error { color: var(--accent); }
+    </style>
     <!-- Script -->
-    <script src="./script.js" defer></script>
 <link rel="stylesheet" href="/index.css">
   <script type="module" crossorigin src="/assets/index-DGzyZDrs.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-DfHC-V2u.css">
@@ -90,7 +105,7 @@
             <a href="#locations" class="mobile-link" data-index="03">ПЛАКАТ</a>
             <a href="#intercept" class="mobile-link" data-index="04">ЕФІР</a>
             <a href="#fragments" class="mobile-link" data-index="05">АРХІВ</a>
-            <a href="#download" class="mobile-link" data-index="06">ОТРИМАТИ</a>
+            <a href="#download" class="mobile-link" data-index="06">ЗАМОВИТИ</a>
             <div class="mobile-footer">
                 EST. 2014
             </div>
@@ -116,7 +131,7 @@
                 <a href="#locations">ПЛАКАТ</a>
                 <a href="#intercept">ЕФІР</a>
                 <a href="#fragments">АРХІВ</a>
-                <a href="#download">ОТРИМАТИ</a>
+                <a href="#download">ЗАМОВИТИ</a>
             </nav>
 
             <!-- Mobile Menu Button -->
@@ -735,17 +750,17 @@
             </div>
         </section>
 
-        <!-- Download / Timer / Epilogue -->
+        <!-- Order Form -->
         <section id="download" class="subscribe-section scroll-reveal">
             <div class="container centered-layout">
-                <div class="section-marker">STATUS // ARCHIVED</div>
-                <h2 class="section-title mobile-center">Матеріали<br>Справи</h2>
+                <div class="section-marker">ЗАМОВЛЕННЯ</div>
+                <h2 class="section-title mobile-center">ЗАМОВИТИ</h2>
                 
                 <div class="form-wrapper">
                     <div class="archive-image-wrapper">
                          <div class="glitch-container">
-                            <img src="https://placehold.co/400x600/0a0a0a/d00000/png?text=TOP+SECRET" 
-                                 alt="Archived Case File" 
+                            <img src="https://placehold.co/400x600/0a0a0a/d00000/png?text=128+%D0%A1%D0%A2%D0%9E%D0%A0%D0%86%D0%9D%D0%9A%D0%98" 
+                                 alt="Волошкове поле — 128 сторінок" 
                                  class="archive-image" 
                                  loading="lazy" 
                                  decoding="async" 
@@ -756,26 +771,45 @@
                          </div>
                     </div>
                     
-                    <p class="mono-desc">ПОВНА ВЕРСІЯ: 124 СТОРІНКИ</p>
+                    <p class="mono-desc">128 СТОРІНОК + ОФОРМЛЕННЯ</p>
+                    <p class="order-price">200 грн — з автографом автора</p>
+                    <p class="order-donation">+ Донат (від 1 грн) до суми — або без</p>
+                    <p class="order-note">Примітка: Відправка пакетна за тиражами протягом 7 днів.</p>
                     
-                    <div class="countdown-wrapper">
-                        <div class="countdown-header">ЧАС ДО ДЕКЛАСИФІКАЦІЇ:</div>
-                        <div id="countdown" class="countdown-display">
-                            <div class="time-unit"><span class="number" id="days">00</span><span class="label">ДНІВ</span></div>
-                            <div class="separator">:</div>
-                            <div class="time-unit"><span class="number" id="hours">00</span><span class="label">ГОД</span></div>
-                            <div class="separator">:</div>
-                            <div class="time-unit"><span class="number" id="minutes">00</span><span class="label">ХВ</span></div>
-                            <div class="separator">:</div>
-                            <div class="time-unit"><span class="number" id="seconds">00</span><span class="label">СЕК</span></div>
+                    <!-- formspree.io: створіть форму, замініть YOUR_FORM_ID -->
+                    <form id="order-form" class="order-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                        <input type="hidden" name="_subject" value="Нове замовлення — Волошкове поле">
+                        <input type="hidden" name="_next" value="https://donetsk2014.github.io/#order-success">
+                        <div class="form-row">
+                            <label for="order-fio">ПІБ *</label>
+                            <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові">
                         </div>
-                    </div>
-
-                    <!-- Direct GitHub Download Link (Placeholder) -->
-                    <a href="https://github.com/v-munister/voloshkove-pole/archive/refs/heads/main.zip" class="download-btn">
-                        <span class="btn-text">[ ЗАВАНТАЖИТИ МАТЕРІАЛИ ]</span>
-                        <span class="btn-hover-effect"></span>
-                    </a>
+                        <div class="form-row">
+                            <label for="order-phone">Телефон *</label>
+                            <input type="tel" id="order-phone" name="phone" required placeholder="+380">
+                        </div>
+                        <div class="form-row">
+                            <label for="order-np">Відділення Нової Пошти *</label>
+                            <input type="text" id="order-np" name="np_branch" required placeholder="Номер та адреса відділення">
+                        </div>
+                        <div class="form-row">
+                            <label for="order-address">Адреса</label>
+                            <input type="text" id="order-address" name="address" placeholder="Повна адреса">
+                        </div>
+                        <div class="form-row">
+                            <label for="order-contact">Viber / WhatsApp (для зворотного зв'язку)</label>
+                            <input type="text" id="order-contact" name="contact" placeholder="Номер для Viber або WhatsApp">
+                        </div>
+                        <div class="form-row">
+                            <label for="order-donation-amount">Донат (грн)</label>
+                            <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0">
+                        </div>
+                        <button type="submit" class="order-submit-btn">
+                            <span class="btn-text">[ ЗАМОВИТИ ]</span>
+                            <span class="btn-hover-effect"></span>
+                        </button>
+                        <div id="order-message" class="order-message"></div>
+                    </form>
                     
                 </div>
             </div>
