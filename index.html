@@ -44,25 +44,49 @@
         if (!form) return;
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            var email = form.getAttribute('data-email') || '';
-            if (!email || email === 'YOUR_EMAIL') {
-                alert('Налаштуйте data-email у формі');
+            var token = form.getAttribute('data-token');
+            var chatId = form.getAttribute('data-chat');
+            if (!token || !chatId) {
+                alert('Налаштуйте data-token та data-chat у формі');
                 return;
             }
-            var body = [
-                'ПІБ: ' + (form.fio?.value || ''),
-                'Телефон: ' + (form.phone?.value || ''),
-                'Відділення НП: ' + (form.np_branch?.value || ''),
-                'Адреса: ' + (form.address?.value || ''),
-                'Viber/WhatsApp: ' + (form.contact?.value || ''),
-                'Донат: ' + (form.querySelector('[name="donation"]')?.value || 0) + ' грн',
-                '',
-                'Сума: 200 + ' + (form.querySelector('[name="donation"]')?.value || 0) + ' = ' + (200 + parseInt(form.querySelector('[name="donation"]')?.value || 0, 10)) + ' грн'
-            ].join('\n');
-            var subject = 'Замовлення — Волошкове поле';
-            location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            var donation = parseInt(form.querySelector('[name="donation"]')?.value || 0, 10);
+            var total = 200 + donation;
+            var text = '📦 *НОВЕ ЗАМОВЛЕННЯ*\n\n' +
+                '👤 *ПІБ:* ' + (form.fio?.value || '—') + '\n' +
+                '📱 *Телефон:* ' + (form.phone?.value || '—') + '\n' +
+                '📮 *Відділення НП:* ' + (form.np_branch?.value || '—') + '\n' +
+                '📍 *Адреса:* ' + (form.address?.value || '—') + '\n' +
+                '💬 *Viber/WhatsApp:* ' + (form.contact?.value || '—') + '\n' +
+                '💰 *Донат:* ' + donation + ' грн\n\n' +
+                '_Сума: 200 + ' + donation + ' = ' + total + ' грн_';
+            var btn = form.querySelector('.order-submit-btn .btn-text') || form.querySelector('.order-submit-btn');
             var msg = document.getElementById('order-message');
-            if (msg) { msg.textContent = 'Відкрийте пошту та надішліть лист.'; msg.className = 'order-message success'; }
+            if (btn) btn.textContent = '[ ВІДПРАВЛЯЄМО... ]';
+            msg.textContent = '';
+            msg.className = 'order-message';
+            fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (btn) btn.textContent = '[ ЗАМОВИТИ ]';
+                if (data.ok) {
+                    msg.textContent = 'Заявку отримано. Ми зв\'яжемося з вами.';
+                    msg.className = 'order-message success';
+                    form.reset();
+                } else {
+                    msg.textContent = data.description || 'Помилка. Спробуйте пізніше.';
+                    msg.className = 'order-message error';
+                }
+            })
+            .catch(function() {
+                if (btn) btn.textContent = '[ ЗАМОВИТИ ]';
+                msg.textContent = 'Помилка з\'єднання. Спробуйте пізніше.';
+                msg.className = 'order-message error';
+            });
         });
     });
     </script>
@@ -803,8 +827,8 @@
                     <p class="order-donation">+ Донат (від 1 грн) до суми — або без</p>
                     <p class="order-note">Примітка: Відправка пакетна за тиражами протягом 7 днів.</p>
                     
-                    <!-- Замініть YOUR_EMAIL на вашу пошту для отримання замовлень -->
-                    <form id="order-form" class="order-form" data-email="YOUR_EMAIL">
+                    <!-- data-token: токен бота, data-chat: ваш chat_id або @username -->
+                    <form id="order-form" class="order-form" data-token="7131811282:AAH9f-KqTA1e8R_icty9KVzvD5tLpAnSSro" data-chat="@munister">
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові">
