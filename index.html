@@ -50,6 +50,9 @@
     .order-form input { width: 100%; padding: 16px 20px; background: #faf9f7; border: 1px solid #ddd8ce; color: #1a1816; font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.5; border-radius: 6px; transition: border-color .2s, box-shadow .2s; }
     .order-form input:focus { outline: none; border-color: #8b2500; box-shadow: 0 0 0 3px rgba(139,37,0,.12); }
     .order-form input::placeholder { color: #9a9388; }
+    .order-form textarea { width: 100%; padding: 16px 20px; background: #faf9f7; border: 1px solid #ddd8ce; color: #1a1816; font-family: var(--font-mono); font-size: 1.05rem; line-height: 1.5; border-radius: 6px; resize: vertical; min-height: 60px; }
+    .order-form textarea:focus { outline: none; border-color: #8b2500; box-shadow: 0 0 0 3px rgba(139,37,0,.12); }
+    .order-form textarea::placeholder { color: #9a9388; }
     .order-form .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
     .order-form .form-row-inline .form-row { margin-bottom: 0; }
     .order-total-row { font-size: 1.2rem; color: #8b2500; margin: 28px 0 20px; padding: 18px 22px; background: #fdf6f4; border-left: 4px solid #8b2500; border-radius: 0 8px 8px 0; font-weight: 600; letter-spacing: -.01em; line-height: 1.4; font-family: var(--font-mono); }
@@ -84,11 +87,10 @@
         function calcTotal() {
             var qty = parseInt(form.querySelector('[name="qty"]')?.value || 1, 10);
             var donation = parseInt(form.querySelector('[name="donation"]')?.value || 0, 10);
-            var shipping = qty === 1 ? 60 : (qty === 2 ? 70 : 80);
             var books = 200 * qty;
-            var total = books + shipping + donation;
+            var total = books + donation;
             var el = document.getElementById('order-total-display');
-            if (el) el.textContent = 'Сума: ' + total + ' грн (кн. ' + books + ' + доставка ' + shipping + (donation ? ' + донат ' + donation : '') + ')';
+            if (el) el.textContent = 'Сума: ' + total + ' грн' + (donation ? ' (кн. ' + books + ' + донат ' + donation + ')' : '');
         }
         form.querySelector('[name="qty"]')?.addEventListener('input', calcTotal);
         form.querySelector('[name="qty"]')?.addEventListener('change', calcTotal);
@@ -101,9 +103,9 @@
             if (!token || !chatId) { alert('Налаштуйте data-token та data-chat'); return; }
             var qty = parseInt(form.querySelector('[name="qty"]')?.value || 1, 10);
             var donation = parseInt(form.querySelector('[name="donation"]')?.value || 0, 10);
-            var shipping = qty === 1 ? 60 : (qty === 2 ? 70 : 80);
             var books = 200 * qty;
-            var total = books + shipping + donation;
+            var total = books + donation;
+            var notes = form.querySelector('[name="notes"]')?.value || '';
             var orderId = 'VP-' + Date.now();
             var npNum = form.querySelector('[name="np_number"]')?.value || '';
             var npCity = form.querySelector('[name="np_city"]')?.value || '';
@@ -114,8 +116,9 @@
                 '📱 *Телефон:* ' + (form.phone?.value || '—') + '\n' +
                 '📮 *НП:* ' + npBranch + '\n' +
                 '💬 *Viber/WhatsApp:* ' + (form.contact?.value || '—') + '\n' +
-                '💰 *Донат:* ' + donation + ' грн\n\n' +
-                '_Книги: ' + books + ' + доставка ' + shipping + ' + донат ' + donation + ' = ' + total + ' грн_\n' +
+                '💰 *Донат:* ' + donation + ' грн\n' +
+                (notes ? '📝 *Примітка:* ' + notes + '\n' : '') +
+                '\n_Сума: ' + books + (donation ? ' + ' + donation : '') + ' = ' + total + ' грн (доставка за наш рахунок)_\n' +
                 '📋 Статус: Новий';
             var btn = form.querySelector('.order-submit-btn .btn-text') || form.querySelector('.order-submit-btn');
             var msg = document.getElementById('order-message');
@@ -319,9 +322,8 @@
                             <p class="order-product-meta">128 сторінок · з автографом</p>
                             <p class="order-price">200 грн</p>
                             <div class="order-product-details">
-                                <p>Доставка НП від 60 грн</p>
-                                <p>Оплата при отриманні</p>
-                                <p>Мін. сума: 260 грн</p>
+                                <p>Повна передплата</p>
+                                <p>Доставка за наш рахунок</p>
                                 <p class="order-donation-accent">+ Додатковий донат</p>
                                 <p class="order-note">Після замовлення — посилання на переказ</p>
                             </div>
@@ -339,7 +341,7 @@
                                 <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
                             </div>
                         </div>
-                        <p class="order-payment-note">Оплата при отриманні. Після замовлення вам надішлють посилання на переказ.</p>
+                        <p class="order-payment-note">Повна передплата. Доставка за наш рахунок. Після замовлення вам надішлють посилання на переказ.</p>
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові" autocomplete="name">
@@ -362,7 +364,11 @@
                             <label for="order-contact">Viber / WhatsApp</label>
                             <input type="tel" id="order-contact" name="contact" placeholder="+380 для зв'язку" inputmode="tel">
                         </div>
-                        <div class="order-total-row" id="order-total-display">Сума: 260 грн</div>
+                        <div class="form-row">
+                            <label for="order-notes">Примітка</label>
+                            <textarea id="order-notes" name="notes" rows="2" placeholder="Додаткова інформація до замовлення"></textarea>
+                        </div>
+                        <div class="order-total-row" id="order-total-display">Сума: 200 грн</div>
                         <button type="submit" class="order-submit-btn">
                             <span class="btn-text">[ ЗАМОВИТИ ]</span>
                             <span class="btn-hover-effect"></span>
