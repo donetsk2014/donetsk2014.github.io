@@ -24,28 +24,34 @@
     
     <!-- Order Form Styles -->
     <style>
-    .order-price { font-size: 1.2rem; color: var(--accent); margin: 10px 0; }
-    .order-donation, .order-note { font-size: .9rem; color: #888; margin: 5px 0; }
-    .order-form { max-width: 400px; margin: 30px auto 0; text-align: left; }
-    .order-form .form-row { margin-bottom: 15px; }
-    .order-form label { display: block; font-size: .75rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .1em; }
-    .order-form input { width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; font-family: var(--font-mono); font-size: .95rem; }
-    .order-form input:focus { outline: none; border-color: var(--accent); }
+    .order-section-flex { display: grid; grid-template-columns: minmax(240px, 300px) minmax(280px, 380px); gap: 50px; align-items: start; justify-content: center; max-width: 720px; margin: 0 auto; }
+    .order-product-card { position: sticky; top: 120px; }
+    .order-product-img { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.5); display: block; aspect-ratio: 3/4; object-fit: cover; }
+    .order-product-info { margin-top: 20px; }
+    .order-product-info .mono-desc { font-size: .8rem; color: #888; margin-bottom: 8px; }
+    .order-price { font-size: 1.35rem; color: var(--accent); margin: 12px 0 8px; font-weight: 700; }
+    .order-shipping, .order-min { font-size: .8rem; color: #666; margin: 4px 0; line-height: 1.4; }
+    .order-donation, .order-note { font-size: .8rem; color: #666; margin: 8px 0 4px; }
+    .order-form { background: rgba(17,17,17,.6); border: 1px solid #222; border-radius: 6px; padding: 28px 24px; }
+    .order-form .form-row { margin-bottom: 18px; }
+    .order-form label { display: block; font-size: .7rem; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .12em; font-weight: 500; }
+    .order-form input { width: 100%; padding: 14px 16px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; font-family: var(--font-mono); font-size: .95rem; border-radius: 4px; transition: border-color .2s, box-shadow .2s; }
+    .order-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(192,57,43,.15); }
     .order-form input::placeholder { color: #555; }
-    .order-submit-btn { margin-top: 20px; cursor: pointer; display: inline-block; padding: 15px 40px; border: 1px solid #fff; color: #fff; font-family: var(--font-mono); position: relative; overflow: hidden; transition: all .3s ease; background: transparent; font-size: inherit; }
-    .order-submit-btn:hover { background: #fff; color: #000; }
-    .order-message { margin-top: 15px; font-size: .9rem; min-height: 20px; }
-    .order-message.success { color: #0f0; }
+    .order-form .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+    .order-form .form-row-inline .form-row { margin-bottom: 0; }
+    .order-total-row { font-size: 1.15rem; color: var(--accent); margin: 20px 0 16px; padding: 14px 16px; background: rgba(192,57,43,.08); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; font-weight: 700; }
+    .order-submit-btn { width: 100%; margin-top: 8px; cursor: pointer; display: block; padding: 16px 24px; border: 2px solid var(--accent); color: var(--accent); font-family: var(--font-mono); font-size: .9rem; font-weight: 600; letter-spacing: .1em; background: transparent; border-radius: 4px; transition: all .25s ease; }
+    .order-submit-btn:hover { background: var(--accent); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192,57,43,.3); }
+    .order-message { margin-top: 16px; font-size: .9rem; min-height: 22px; padding: 10px 0; }
+    .order-message.success { color: #4ade80; }
     .order-message.error { color: var(--accent); }
-    .order-section-flex { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; justify-content: center; }
-    .order-product-card { flex: 0 0 280px; }
-    .order-product-img { width: 100%; height: auto; border: 1px solid #333; }
-    .order-product-info { margin-top: 15px; }
-    .order-shipping, .order-min { font-size: .85rem; color: #888; margin: 5px 0; }
-    .order-total-row { font-size: 1.1rem; color: var(--accent); margin: 15px 0 5px; font-weight: 700; }
-    @media (max-width: 640px) {
-        .order-section-flex { flex-direction: column; align-items: center; }
-        .order-form input { font-size: 16px; min-height: 44px; }
+    @media (max-width: 700px) {
+        .order-section-flex { grid-template-columns: 1fr; gap: 32px; }
+        .order-product-card { position: static; max-width: 260px; margin: 0 auto; }
+        .order-form { padding: 24px 20px; }
+        .order-form input { font-size: 16px; min-height: 48px; padding: 14px 16px; }
+        .order-form .form-row-inline { grid-template-columns: 1fr; }
     }
     </style>
     <script>
@@ -280,10 +286,10 @@
                 
                 <div class="form-wrapper order-section-flex">
                     <div class="order-product-card">
-                        <img src="assets/product.jpg" alt="Волошкове поле — 128 сторінок" class="order-product-img" loading="lazy" width="280" height="420">
+                        <img src="assets/product.png" alt="Волошкове поле — В'ячеслав Муністер" class="order-product-img" loading="lazy" width="280" height="420">
                         <div class="order-product-info">
-                            <p class="mono-desc">128 СТОРІНОК + ОФОРМЛЕННЯ</p>
-                            <p class="order-price">200 грн — з автографом автора</p>
+                            <p class="mono-desc">В'ячеслав Муністер · 128 сторінок</p>
+                            <p class="order-price">200 грн — з автографом</p>
                             <p class="order-shipping">Доставка НП: від 60 грн (залежить від ваги)</p>
                             <p class="order-min">Мін. сума для відправки: 260 грн (1 кн. + доставка)</p>
                             <p class="order-donation">+ Донат (від 1 грн) — або без</p>
@@ -292,9 +298,15 @@
                     </div>
                     
                     <form id="order-form" class="order-form" data-token="7131811282:AAH9f-KqTA1e8R_icty9KVzvD5tLpAnSSro" data-chat="871897952">
-                        <div class="form-row">
-                            <label for="order-qty">Кількість книг *</label>
-                            <input type="number" id="order-qty" name="qty" min="1" value="1" required inputmode="numeric">
+                        <div class="form-row form-row-inline">
+                            <div class="form-row">
+                                <label for="order-qty">Кількість *</label>
+                                <input type="number" id="order-qty" name="qty" min="1" value="1" required inputmode="numeric">
+                            </div>
+                            <div class="form-row">
+                                <label for="order-donation-amount">Донат (грн)</label>
+                                <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
+                            </div>
                         </div>
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
@@ -302,23 +314,19 @@
                         </div>
                         <div class="form-row">
                             <label for="order-phone">Телефон *</label>
-                            <input type="tel" id="order-phone" name="phone" required placeholder="+380991234567" inputmode="tel" autocomplete="tel">
+                            <input type="tel" id="order-phone" name="phone" required placeholder="+380 99 123 45 67" inputmode="tel" autocomplete="tel">
                         </div>
                         <div class="form-row">
                             <label for="order-np">Відділення Нової Пошти *</label>
-                            <input type="text" id="order-np" name="np_branch" required placeholder="№ відділення та місто">
+                            <input type="text" id="order-np" name="np_branch" required placeholder="№ відділення, місто">
                         </div>
                         <div class="form-row">
                             <label for="order-address">Адреса</label>
-                            <input type="text" id="order-address" name="address" placeholder="Повна адреса (для адресної доставки)">
+                            <input type="text" id="order-address" name="address" placeholder="Для адресної доставки">
                         </div>
                         <div class="form-row">
                             <label for="order-contact">Viber / WhatsApp</label>
-                            <input type="tel" id="order-contact" name="contact" placeholder="+380 для зворотного зв'язку" inputmode="tel">
-                        </div>
-                        <div class="form-row">
-                            <label for="order-donation-amount">Донат (грн)</label>
-                            <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
+                            <input type="tel" id="order-contact" name="contact" placeholder="+380 для зв'язку" inputmode="tel">
                         </div>
                         <div class="order-total-row" id="order-total-display">Сума: 260 грн</div>
                         <button type="submit" class="order-submit-btn">
@@ -884,19 +892,6 @@
                         <button class="expand-btn-stamp" data-closed="[ ВІДКРИТИ ]" data-open="[ ЗАКРИТИ ]">[ ВІДКРИТИ ]</button>
                     </div>
 
-                </div>
-            </div>
-        </section>
-
-        <!-- NEW: DONATE SECTION -->
-        <section id="donate" class="donate-section">
-            <div class="container">
-                <div class="donate-card scroll-reveal">
-                    <div class="donate-header">ВИТРАТИ НА РОЗСЛІДУВАННЯ</div>
-                    <p>Незалежність коштує дорого. Ваша підтримка дозволяє нам продовжувати роботу.</p>
-                    <a href="https://send.monobank.ua/jar/4geL7Q9ETM" target="_blank" class="donate-btn">
-                        <span>[ ПІДТРИМАТИ (MONOBANK) ]</span>
-                    </a>
                 </div>
             </div>
         </section>
