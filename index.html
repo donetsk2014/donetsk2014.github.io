@@ -121,7 +121,7 @@
                 '💬 *Viber/WhatsApp:* ' + (form.contact?.value || '—') + '\n' +
                 '💰 *Донат:* ' + donation + ' грн\n' +
                 (notes ? '📝 *Примітка:* ' + notes + '\n' : '') +
-                '\n_Сума: ' + books + (donation ? ' + ' + donation : '') + ' = ' + total + ' грн (доставка за наш рахунок)_\n' +
+                '\n_Сума: ' + books + (donation ? ' + ' + donation : '') + ' = ' + total + ' грн (доставка за ваш рахунок при отриманні)_\n' +
                 '📋 Статус: Новий';
             var btn = form.querySelector('.order-submit-btn .btn-text') || form.querySelector('.order-submit-btn');
             var msg = document.getElementById('order-message');
@@ -326,7 +326,7 @@
                             <p class="order-price">200 грн</p>
                             <div class="order-product-details">
                                 <p>Повна передплата</p>
-                                <p>Доставка за наш рахунок</p>
+                                <p>Доставка за ваш рахунок (при отриманні)</p>
                                 <p class="order-donation-accent">+ Додатковий донат (опціонально)</p>
                                 <p class="order-note">Після замовлення — посилання на переказ</p>
                             </div>
@@ -344,7 +344,7 @@
                                 <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
                             </div>
                         </div>
-                        <p class="order-payment-note">Повна передплата. Доставка за наш рахунок. Після замовлення вам надішлють посилання на переказ.</p>
+                        <p class="order-payment-note">Повна передплата. Доставка за ваш рахунок (при отриманні). Після замовлення вам надішлють посилання на переказ.</p>
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові" autocomplete="name">
