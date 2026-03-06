@@ -40,6 +40,10 @@
     .order-product-details { font-size: .95rem; color: #5c554a; line-height: 1.7; font-family: var(--font-mono); }
     .order-product-details p { margin: 6px 0; }
     .order-note { margin-top: 12px !important; padding-top: 12px; border-top: 1px solid #d4cfc4; font-size: .9rem !important; color: #6b6358; }
+    .order-donation-accent { color: #8b2500 !important; font-weight: 600; margin-top: 10px !important; }
+    .order-donation-row label { color: #8b2500; }
+    .order-donation-row input { border-color: #c9a99a; background: #fdf8f6; }
+    .order-payment-note { font-size: .9rem; color: #5c554a; line-height: 1.5; margin: -8px 0 20px; padding: 12px 16px; background: #f5f2ed; border-radius: 6px; border-left: 3px solid #8b7355; }
     .order-form { background: #fff; border: 1px solid #d4cfc4; border-radius: 10px; padding: 40px 36px; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
     .order-form .form-row { margin-bottom: 24px; }
     .order-form label { display: block; font-size: .75rem; color: #5c554a; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; line-height: 1.4; font-family: var(--font-mono); }
@@ -101,11 +105,14 @@
             var books = 200 * qty;
             var total = books + shipping + donation;
             var orderId = 'VP-' + Date.now();
+            var npNum = form.querySelector('[name="np_number"]')?.value || '';
+            var npCity = form.querySelector('[name="np_city"]')?.value || '';
+            var npBranch = (npNum && npCity) ? '№' + npNum + ', ' + npCity : (npNum || npCity || '—');
             var text = '📦 *НОВЕ ЗАМОВЛЕННЯ* ' + orderId + '\n\n' +
                 '📚 *Кількість:* ' + qty + ' шт.\n' +
                 '👤 *ПІБ:* ' + (form.fio?.value || '—') + '\n' +
                 '📱 *Телефон:* ' + (form.phone?.value || '—') + '\n' +
-                '📮 *Відділення НП:* ' + (form.np_branch?.value || '—') + '\n' +
+                '📮 *НП:* ' + npBranch + '\n' +
                 '📍 *Адреса:* ' + (form.address?.value || '—') + '\n' +
                 '💬 *Viber/WhatsApp:* ' + (form.contact?.value || '—') + '\n' +
                 '💰 *Донат:* ' + donation + ' грн\n\n' +
@@ -125,10 +132,12 @@
             .then(function(data) {
                 if (btn) btn.textContent = '[ ЗАМОВИТИ ]';
                 if (data.ok) {
-                    msg.textContent = 'Заявку #' + orderId + ' отримано. Ми зв\'яжемося з вами.';
+                    msg.textContent = 'Заявку #' + orderId + ' отримано. Вам надішлють посилання на переказ.';
                     msg.className = 'order-message success';
                     form.reset();
                     form.querySelector('[name="qty"]').value = 1;
+                    form.querySelector('[name="np_number"]') && (form.querySelector('[name="np_number"]').value = '');
+                    form.querySelector('[name="np_city"]') && (form.querySelector('[name="np_city"]').value = '');
                     calcTotal();
                 } else {
                     msg.textContent = data.description || 'Помилка. Спробуйте пізніше.';
@@ -312,9 +321,10 @@
                             <p class="order-price">200 грн</p>
                             <div class="order-product-details">
                                 <p>Доставка НП від 60 грн</p>
+                                <p>Оплата при отриманні</p>
                                 <p>Мін. сума: 260 грн</p>
-                                <p>+ Донат за бажанням</p>
-                                <p class="order-note">Відправка протягом 7 днів</p>
+                                <p class="order-donation-accent">+ Додатковий донат</p>
+                                <p class="order-note">Після замовлення — посилання на переказ</p>
                             </div>
                         </div>
                     </div>
@@ -325,11 +335,12 @@
                                 <label for="order-qty">Кількість *</label>
                                 <input type="number" id="order-qty" name="qty" min="1" value="1" required inputmode="numeric">
                             </div>
-                            <div class="form-row">
-                                <label for="order-donation-amount">Донат (грн)</label>
+                            <div class="form-row order-donation-row">
+                                <label for="order-donation-amount">Додатковий донат (грн)</label>
                                 <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
                             </div>
                         </div>
+                        <p class="order-payment-note">Оплата при отриманні. Після замовлення вам надішлють посилання на переказ.</p>
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові" autocomplete="name">
@@ -338,13 +349,19 @@
                             <label for="order-phone">Телефон *</label>
                             <input type="tel" id="order-phone" name="phone" required placeholder="+380 99 123 45 67" inputmode="tel" autocomplete="tel">
                         </div>
-                        <div class="form-row">
-                            <label for="order-np">Відділення Нової Пошти *</label>
-                            <input type="text" id="order-np" name="np_branch" required placeholder="№ відділення, місто">
+                        <div class="form-row form-row-inline">
+                            <div class="form-row">
+                                <label for="order-np-num">№ відділення НП *</label>
+                                <input type="text" id="order-np-num" name="np_number" required placeholder="12" inputmode="numeric">
+                            </div>
+                            <div class="form-row">
+                                <label for="order-np-city">Місто *</label>
+                                <input type="text" id="order-np-city" name="np_city" required placeholder="Київ">
+                            </div>
                         </div>
                         <div class="form-row">
-                            <label for="order-address">Адреса</label>
-                            <input type="text" id="order-address" name="address" placeholder="Для адресної доставки">
+                            <label for="order-address">Адреса (якщо адресна доставка)</label>
+                            <input type="text" id="order-address" name="address" placeholder="Вулиця, будинок, квартира">
                         </div>
                         <div class="form-row">
                             <label for="order-contact">Viber / WhatsApp</label>
