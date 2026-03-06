@@ -28,11 +28,11 @@
     <!-- Order Form Styles -->
     <style>
     .order-section-beige { background: linear-gradient(180deg, #e8e4d8 0%, #e0dcd0 100%); color: #2c2a26; padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 32px) clamp(64px, 10vw, 120px); }
-    .order-section-beige .container.centered-layout { max-width: 960px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); text-align: center; }
+    .order-section-beige .container.centered-layout { max-width: none; width: 100%; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); text-align: center; }
     .order-section-beige .section-marker { color: #8b7355; font-size: clamp(.65rem, 1.5vw, .75rem); letter-spacing: .35em; margin-bottom: 12px; font-weight: 600; }
     .order-section-beige .section-title { color: #1a1816; font-family: var(--font-headers); font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 400; letter-spacing: -.04em; line-height: 1.1; margin-bottom: clamp(36px, 6vw, 64px); }
-    .order-section-flex { display: grid; grid-template-columns: minmax(260px, 340px) minmax(280px, 420px); gap: clamp(32px, 5vw, 64px); align-items: start; justify-content: center; margin: 0 auto; text-align: left; width: 100%; }
-    .order-product-card { width: 100%; max-width: 340px; position: sticky; top: 100px; }
+    .order-section-flex { display: grid; grid-template-columns: minmax(280px, 380px) minmax(320px, 1fr); gap: clamp(40px, 6vw, 80px); align-items: start; justify-content: center; margin: 0 auto; text-align: left; width: 100%; max-width: 1200px; }
+    .order-product-card { width: 100%; max-width: 380px; position: sticky; top: 100px; }
     .order-form { width: 100%; min-width: 0; background: #fff; border: 1px solid #d4cfc4; border-radius: 12px; padding: clamp(24px, 4vw, 44px) clamp(20px, 3vw, 40px); box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04); }
     .order-product-img { width: 100%; height: auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.12); display: block; aspect-ratio: 3/4; object-fit: cover; }
     .order-product-info { margin-top: clamp(20px, 3vw, 32px); }
@@ -42,7 +42,6 @@
     .order-product-details { font-size: clamp(.9rem, 1.1vw, 1rem); color: #5c554a; line-height: 1.75; font-family: var(--font-mono); }
     .order-product-details p { margin: 8px 0; }
     .order-note { margin-top: 14px !important; padding-top: 14px; border-top: 1px solid #d4cfc4; font-size: clamp(.85rem, 1vw, .9rem) !important; color: #6b6358; line-height: 1.5; }
-    .order-donation-accent { color: #8b2500 !important; font-weight: 600; margin-top: 12px !important; }
     .order-donation-row label { color: #8b2500; }
     .order-donation-row input { border-color: #c9a99a; background: #fdf8f6; }
     .order-payment-note { font-size: clamp(.85rem, 1vw, .95rem); color: #4a443c; line-height: 1.6; margin: 0 0 24px; padding: 14px 18px; background: #f8f6f1; border-radius: 8px; border-left: 4px solid #8b7355; }
@@ -327,8 +326,6 @@
                             <p class="order-price">200 грн</p>
                             <div class="order-product-details">
                                 <p>Повна передплата</p>
-                                <p>Доставка при отриманні</p>
-                                <p class="order-donation-accent">+ Донат (опціонально)</p>
                                 <p class="order-note">Після замовлення — посилання на переказ</p>
                             </div>
                         </div>
@@ -341,11 +338,11 @@
                                 <input type="number" id="order-qty" name="qty" min="1" value="1" required inputmode="numeric">
                             </div>
                             <div class="form-row order-donation-row">
-                                <label for="order-donation-amount">Донат (грн) — опціонально</label>
+                                <label for="order-donation-amount">Донат (грн)</label>
                                 <input type="number" id="order-donation-amount" name="donation" min="0" value="0" placeholder="0" inputmode="numeric">
                             </div>
                         </div>
-                        <p class="order-payment-note">Повна передплата. Доставка — при отриманні. Після замовлення надішлемо посилання на переказ.</p>
+                        <p class="order-payment-note">Повна передплата. Після замовлення надішлемо посилання на переказ.</p>
                         <div class="form-row">
                             <label for="order-fio">ПІБ *</label>
                             <input type="text" id="order-fio" name="fio" required placeholder="Прізвище Ім'я По батькові" autocomplete="name">
