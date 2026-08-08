@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Я знаю, що ви робили влітку чотирнадцятого — В'ячеслав Муністер</title>
-<meta name="description" content="Роман-репортаж. Хроніка літа 2014: місто, яке втратило приватне життя.">
-<meta name="theme-color" content="#f5f2ec">
+<meta name="description" content="Роман-репортаж. Хроніка літа 2014: місто, яке втратило приватне життя. Друга книга В'ячеслава Муністера.">
+<meta name="theme-color" content="#f4f1ea">
 
 <meta property="og:type" content="book">
 <meta property="og:locale" content="uk_UA">
@@ -15,141 +15,264 @@
 <meta property="og:url" content="https://donetsk2014.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f5f2ec%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22none%22 stroke=%22%232f4a9a%22 stroke-width=%226%22/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f4f1ea%22/><circle cx=%2250%22 cy=%2250%22 r=%2216%22 fill=%22none%22 stroke=%22%232f4a9a%22 stroke-width=%226%22/></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=PT+Sans:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#f5f2ec;
-  --ink:#1c1c20;
-  --ink-2:#55555d;
-  --ink-3:#8b887f;
+  --paper:#f4f1ea;
+  --paper-2:#efebe2;
+  --ink:#191920;
+  --ink-2:#4e4e57;
+  --ink-3:#8a8780;
   --blue:#2f4a9a;
-  --rule:#ddd8cc;
-  --display:'Playfair Display',Georgia,serif;
-  --sans:'PT Sans',-apple-system,Segoe UI,sans-serif;
+  --blue-dark:#22376f;
+  --rule:#d9d3c6;
+  --rule-soft:#e4dfd4;
+  --display:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'PT Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --col:660px;
+  --wide:1000px;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
-  margin:0;background:var(--bg);color:var(--ink);
-  font-family:var(--sans);font-size:18px;line-height:1.8;
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:18px;line-height:1.78;
+  font-feature-settings:"kern" 1,"liga" 1,"onum" 1;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
 }
 img{display:block;max-width:100%;height:auto}
-a{color:var(--blue)}
-p{margin:0 0 1.3em}
-h1,h2{font-family:var(--display);font-weight:400;margin:0}
+a{color:var(--blue);text-underline-offset:3px}
+p{margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
 
-.page{max-width:600px;margin:0 auto;padding:0 24px}
+.col{width:100%;max-width:var(--col);margin:0 auto;padding:0 26px}
+.wide{width:100%;max-width:var(--wide);margin:0 auto;padding:0 26px}
 
-/* обкладинка */
-.cover{padding:clamp(70px,14vw,150px) 0 clamp(60px,10vw,110px);text-align:center}
-.cover .author{font-family:var(--display);font-style:italic;color:var(--ink-3);margin:0 0 clamp(26px,5vw,44px)}
-.cover h1{font-size:clamp(2rem,7.4vw,3.4rem);line-height:1.1}
+/* ————— тонка верхня планка ————— */
+.bar{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(244,241,234,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--rule-soft);
+  transform:translateY(-100%);transition:transform .35s ease;
+}
+.bar.show{transform:none}
+.bar-in{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:11px 0}
+.bar .t{font-family:var(--display);font-size:.98rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .t em{font-style:italic;color:var(--blue)}
+.bar .b{
+  flex:none;font-size:.88rem;text-decoration:none;color:#fff;background:var(--blue);
+  padding:7px 16px;border-radius:2px;
+}
+.bar .b:hover{background:var(--blue-dark)}
+
+/* ————— обкладинка ————— */
+.cover{padding:clamp(78px,13vw,140px) 0 clamp(56px,9vw,96px);text-align:center;position:relative}
+.cover::after{
+  content:"";position:absolute;left:50%;bottom:0;width:min(760px,86vw);height:1px;
+  transform:translateX(-50%);background:var(--rule);
+}
+.imprint{
+  font-family:var(--sans);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:clamp(30px,6vw,52px);
+}
+.imprint b{font-weight:400;color:var(--ink-2)}
+.cover h1{font-size:clamp(2.05rem,7vw,3.55rem);line-height:1.12;letter-spacing:-.015em}
 .cover h1 span{display:block}
 .cover h1 .b{color:var(--blue)}
 .cover h1 .i{color:var(--blue);font-style:italic}
-.cover .en{margin:clamp(24px,4vw,32px) 0 0;font-family:var(--display);font-style:italic;font-size:.92rem;color:var(--ink-3)}
-.emblem{width:88px;margin:clamp(34px,6vw,54px) auto 0;opacity:.8}
-.cover .sub{margin:clamp(32px,5vw,48px) 0 0;font-family:var(--display);font-size:clamp(1.05rem,3vw,1.3rem);line-height:1.5}
-
-hr{border:0;border-top:1px solid var(--rule);margin:0}
-
-section{padding:clamp(48px,8vw,80px) 0}
-.about p{margin:0;color:var(--ink-2);text-indent:1.8em}
-.about p:first-child{margin:0;color:var(--ink);font-size:1.1rem;text-indent:0}
-
-/* заклик до покупки */
-.cta{margin:clamp(30px,5vw,42px) 0 0;text-align:center}
-.cta a{
-  display:inline-flex;align-items:baseline;gap:10px;text-decoration:none;
-  font-family:var(--display);font-size:1.15rem;color:var(--blue);
-  border-bottom:1px solid var(--blue);padding-bottom:4px;
+.title-rule{width:64px;height:1px;background:var(--rule);margin:clamp(24px,4vw,32px) auto}
+.cover .en{font-family:var(--display);font-style:italic;font-size:.93rem;letter-spacing:.1em;color:var(--ink-3)}
+.emblem{width:clamp(86px,11vw,110px);margin:clamp(34px,6vw,52px) auto 0}
+.emblem svg{overflow:visible}
+.cover .sub{
+  margin:clamp(32px,5vw,46px) auto 0;max-width:30ch;
+  font-family:var(--display);font-size:clamp(1.08rem,3vw,1.32rem);line-height:1.5;
 }
-.cta a span{font-family:var(--sans);font-size:.95rem}
-.cta .arrow{display:block;margin-top:14px;color:var(--blue);font-size:1.1rem;animation:nudge 2.4s ease-in-out infinite}
-@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
-
-blockquote{
-  margin:0;font-family:var(--display);font-style:italic;
-  font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:1.5;text-align:center;
+.cover .sub small{display:block;margin-top:10px;font-size:.74em;font-style:italic;color:var(--ink-3)}
+.buy{
+  display:inline-flex;align-items:baseline;gap:12px;margin-top:clamp(32px,5vw,46px);
+  padding:14px 30px;background:var(--blue);color:#fff;text-decoration:none;border-radius:2px;
+  font-size:1rem;box-shadow:0 8px 22px rgba(47,74,154,.22);transition:background .2s,transform .12s,box-shadow .2s;
 }
-blockquote p{margin:0}
-blockquote cite{display:block;margin-top:18px;font-family:var(--sans);font-style:normal;font-size:.9rem;color:var(--ink-3)}
+.buy:hover{background:var(--blue-dark);box-shadow:0 10px 26px rgba(47,74,154,.3)}
+.buy:active{transform:translateY(1px)}
+.buy b{font-family:var(--display);font-weight:400;font-size:1.06rem}
+.buy .sep{opacity:.5}
 
-details{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-summary{
-  list-style:none;cursor:pointer;padding:18px 0;
-  font-family:var(--display);font-size:1.1rem;display:flex;justify-content:space-between;align-items:center;
+/* ————— секції ————— */
+section{padding:clamp(54px,9vw,92px) 0}
+.head{margin-bottom:clamp(26px,4vw,38px)}
+.head .no{
+  font-family:var(--display);font-style:italic;color:var(--blue);font-size:1.02rem;
+  display:block;margin-bottom:6px;
 }
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";color:var(--blue);font-size:1.2rem}
-details[open] summary::after{content:"–"}
-details ol{list-style:none;margin:0;padding:0 0 22px}
-details li{display:flex;gap:14px;padding:5px 0;color:var(--ink-2);font-size:.98rem}
-details li b{font-family:var(--display);font-weight:400;color:var(--blue);min-width:1.6em}
-details .pt{margin:16px 0 6px;font-family:var(--display);font-style:italic;color:var(--ink)}
-details .pt:first-child{margin-top:0}
+.head h2{font-size:clamp(1.55rem,4.2vw,2.2rem);line-height:1.22}
 
-.book{display:flex;gap:28px;align-items:flex-start}
-.book img{width:150px;flex:none;border:1px solid var(--rule)}
-.book .d{font-size:.98rem;color:var(--ink-2)}
-.book .d p{margin:0 0 6px}
-.book .price{font-family:var(--display);font-size:1.4rem;color:var(--blue);margin:0 0 8px}
+/* проза з абзацним відступом */
+.prose{hyphens:auto;-webkit-hyphens:auto}
+.prose p{color:var(--ink-2);text-indent:1.9em}
+.prose p:first-of-type{text-indent:0;color:var(--ink)}
+.prose p:first-of-type::first-line{font-variant:small-caps;letter-spacing:.02em}
+
+/* цитата */
+.epigraph{
+  margin:clamp(34px,5vw,48px) 0 0;padding:clamp(24px,4vw,32px) 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);text-align:center;
+}
+.epigraph p{
+  font-family:var(--display);font-style:italic;color:var(--ink);
+  font-size:clamp(1.12rem,3vw,1.42rem);line-height:1.5;text-wrap:balance;
+}
+.epigraph cite{
+  display:block;margin-top:14px;font-family:var(--sans);font-style:normal;
+  font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+}
+
+/* ————— зміст ————— */
+.toc{background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.part{margin-top:clamp(26px,4vw,38px)}
+.part:first-of-type{margin-top:0}
+.part h3{
+  font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;font-family:var(--sans);
+  color:var(--ink-3);margin-bottom:2px;
+}
+.part .pt{font-family:var(--display);font-style:italic;font-size:1.22rem;color:var(--ink);margin-bottom:10px}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc li{display:flex;align-items:baseline;gap:10px;padding:6px 0}
+.toc .n{font-family:var(--display);color:var(--blue);font-size:.95rem;min-width:1.7em;flex:none}
+.toc .t{font-family:var(--display);font-size:1.08rem;flex:none;max-width:calc(100% - 2rem)}
+.toc .lead{flex:1;min-width:14px;border-bottom:1px dotted var(--rule);transform:translateY(-4px)}
+.toc .d{flex:none;font-size:.84rem;color:var(--ink-3);white-space:nowrap}
+
+/* ————— фрагмент ————— */
+.excerpt{max-width:600px;margin:0 auto}
+.excerpt .prose p{color:var(--ink-2)}
+.excerpt .who{margin-top:22px;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);text-align:right}
+
+/* ————— замовлення ————— */
+.order{background:var(--paper-2);border-top:1px solid var(--rule)}
+.order-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(32px,5vw,60px);align-items:start}
+.shelf{text-align:center}
+.shelf img{
+  width:100%;max-width:280px;margin:0 auto;border:1px solid var(--rule);
+  box-shadow:0 22px 44px -18px rgba(25,25,32,.35);
+}
+.spec{margin-top:26px;text-align:left;font-size:.95rem}
+.spec dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 16px}
+.spec dt{color:var(--ink-3)}
+.spec dd{margin:0;text-align:right;color:var(--ink-2)}
+.spec .price{
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.spec .price b{font-family:var(--display);font-weight:400;font-size:1.7rem;color:var(--blue)}
+.spec .price span{color:var(--ink-3);font-size:.88rem}
 
 form{
-  margin-top:32px;background:#fff;border:1px solid rgba(47,74,154,.22);
-  border-top:3px solid var(--blue);padding:clamp(22px,5vw,32px);
-  box-shadow:0 10px 30px rgba(47,74,154,.07);
+  background:#fff;border:1px solid rgba(47,74,154,.2);border-top:3px solid var(--blue);
+  padding:clamp(24px,4vw,34px);box-shadow:0 14px 36px -20px rgba(25,25,32,.4);
 }
-form .ft{margin:0 0 22px;font-family:var(--display);font-size:1.2rem;color:var(--ink)}
-.row{margin-bottom:16px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-label{display:block;font-size:.86rem;color:var(--ink-2);margin-bottom:5px}
-input,textarea{
-  width:100%;padding:11px 13px;background:#fbfaf7;border:1px solid var(--rule);
-  font-family:var(--sans);font-size:1rem;color:var(--ink);border-radius:3px;transition:border-color .2s,box-shadow .2s;
+form .ft{font-family:var(--display);font-size:1.25rem;margin-bottom:4px}
+form .fs{font-size:.9rem;color:var(--ink-3);margin-bottom:24px}
+.row{margin-bottom:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+label{display:block;font-size:.85rem;color:var(--ink-2);margin-bottom:5px}
+input{
+  width:100%;padding:11px 13px;background:#fbfaf7;border:1px solid var(--rule);border-radius:3px;
+  font-family:var(--sans);font-size:1rem;color:var(--ink);transition:border-color .18s,box-shadow .18s;
 }
-input:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,74,154,.13)}
-textarea{resize:vertical;min-height:40px}
+input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,74,154,.13)}
+.sum{
+  margin:20px 0 0;padding-top:16px;border-top:1px solid var(--rule-soft);
+  display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;color:var(--ink-2);
+}
+.sum b{font-family:var(--display);font-weight:400;font-size:1.5rem;color:var(--blue)}
 button{
-  margin-top:20px;width:100%;padding:17px;background:var(--blue);border:0;border-radius:3px;
-  color:#fff;font-family:var(--sans);font-size:1.05rem;cursor:pointer;
-  box-shadow:0 6px 18px rgba(47,74,154,.28);transition:background .2s,transform .12s;
+  margin-top:16px;width:100%;padding:16px;background:var(--blue);border:0;border-radius:3px;
+  color:#fff;font-family:var(--sans);font-size:1.03rem;cursor:pointer;
+  box-shadow:0 8px 20px rgba(47,74,154,.26);transition:background .2s,transform .12s;
 }
-button:hover{background:#243c82}
+button:hover{background:var(--blue-dark)}
 button:active{transform:translateY(1px)}
-button:disabled{opacity:.5;cursor:default;box-shadow:none}
-.msg{min-height:22px;margin:14px 0 0;font-size:.95rem}
+button:disabled{opacity:.55;cursor:default;box-shadow:none}
+.msg{min-height:22px;margin-top:14px;font-size:.94rem}
 .msg.ok{color:#2c6b45}
 .msg.err{color:#a33223}
 
-footer{padding:28px 0 40px;color:var(--ink-3);font-size:.9rem;text-align:center}
-
-@media(max-width:520px){
-  body{font-size:17px}
-  .book{gap:20px}
-  .book img{width:110px}
-  .two{grid-template-columns:1fr;gap:16px}
-  input,textarea{font-size:16px}
+/* ————— підвал ————— */
+footer{
+  background:var(--ink);color:#cfccc4;
+  padding:clamp(44px,7vw,68px) 0 clamp(28px,4vw,38px);
 }
+.f-top{
+  display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:clamp(26px,4vw,48px);
+  padding-bottom:clamp(30px,4vw,42px);border-bottom:1px solid rgba(255,255,255,.13);
+}
+.f-book .fh{font-family:var(--display);font-size:1.3rem;color:#f4f1ea;line-height:1.3}
+.f-book .fh em{font-style:italic;color:#93a8d8}
+.f-book .fa{margin-top:8px;font-size:.94rem;color:#93908a}
+.f-col h4{
+  margin:0 0 12px;font-family:var(--sans);font-weight:400;font-size:.76rem;
+  letter-spacing:.2em;text-transform:uppercase;color:#7d7a74;
+}
+.f-col ul{list-style:none;margin:0;padding:0;font-size:.96rem}
+.f-col li{padding:3px 0}
+.f-col a{color:#cfccc4;text-decoration:none;border-bottom:1px solid transparent}
+.f-col a:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.f-col .muted{color:#7d7a74}
+.f-bottom{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  padding-top:22px;font-size:.85rem;color:#7d7a74;
+}
+.f-mark{display:flex;align-items:center;gap:12px}
+.f-mark svg{width:26px;height:26px;flex:none;opacity:.75}
+
+@media(max-width:820px){
+  .order-in{grid-template-columns:1fr;gap:34px}
+  .shelf img{max-width:230px}
+  .f-top{grid-template-columns:1fr 1fr}
+  .f-book{grid-column:1/-1}
+}
+@media(max-width:540px){
+  body{font-size:17px}
+  .col,.wide{padding:0 20px}
+  .two{grid-template-columns:1fr}
+  input{font-size:16px;padding:13px}
+  .toc .lead{display:none}
+  .toc li{flex-wrap:wrap}
+  .toc .d{width:100%;padding-left:calc(1.7em + 10px)}
+  .f-top{grid-template-columns:1fr;gap:26px}
+  .f-bottom{flex-direction:column;align-items:flex-start;gap:12px}
+  .prose p:first-of-type::first-line{font-variant:normal}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 
-<div class="page">
+<div class="bar" id="bar">
+  <div class="wide bar-in">
+    <div class="t">В'ячеслав Муністер · <em>Я знаю, що ви робили влітку чотирнадцятого</em></div>
+    <a class="b" href="#order">Купити · 200 ₴</a>
+  </div>
+</div>
 
-  <header class="cover">
-    <p class="author">В'ячеслав Муністер</p>
+<header class="cover">
+  <div class="col">
+    <p class="imprint">Роман-репортаж &nbsp;·&nbsp; <b>книга друга</b></p>
+
     <h1>
       <span>Я знаю, що</span>
       <span class="b">ви робили влітку</span>
       <span class="i">чотирнадцятого</span>
     </h1>
+
+    <div class="title-rule"></div>
     <p class="en">I know what you did in the summer of 2014</p>
 
     <div class="emblem" aria-hidden="true">
@@ -157,123 +280,222 @@ footer{padding:28px 0 40px;color:var(--ink-3);font-size:.9rem;text-align:center}
         <circle cx="100" cy="100" r="72" stroke-width="1"/>
         <line x1="100" y1="28" x2="100" y2="172" stroke-width="1"/>
         <line x1="28" y1="100" x2="172" y2="100" stroke-width="1"/>
+        <line x1="49" y1="49" x2="151" y2="151" stroke-width="1" stroke-dasharray="4 6" opacity=".6"/>
+        <line x1="151" y1="49" x2="49" y2="151" stroke-width="1" stroke-dasharray="4 6" opacity=".6"/>
         <g id="rays" stroke-width="1"></g>
         <circle cx="100" cy="100" r="10" stroke-width="1.5"/>
       </svg>
     </div>
 
-    <p class="sub">Хроніка літа 2014: місто, яке втратило приватне життя</p>
+    <p class="sub">Хроніка літа 2014: місто, яке втратило приватне життя
+      <small>Chronicle of Summer 2014: The city that lost its private life</small></p>
 
-    <p class="cta">
-      <a href="#order">Купити книгу <span>· 200 грн</span></a>
-      <span class="arrow" aria-hidden="true">↓</span>
-    </p>
-  </header>
+    <a class="buy" href="#order"><b>Купити книгу</b><span class="sep">·</span>200 ₴</a>
+  </div>
+</header>
 
-  <hr>
+<main>
 
-  <section class="about">
-    <p>Роман-репортаж. Друга книга — про те, чим виявилося повернення, обіцяне наприкінці «Волошкового поля».</p>
-    <p>Тут майже немає бою. Це книжка про тил окупованого міста: про облік, про черги, про папери й про ту швидкість, з якою нормальні люди звикають до ненормального.</p>
-    <p>Три місяці — стільки потрібно, щоб мільйонне європейське місто перестало бути собою. Усе, що було потім, лише розгортало те, що склалося за це літо.</p>
-  </section>
+<section>
+  <div class="col">
+    <div class="head">
+      <span class="no">I</span>
+      <h2>Про книгу</h2>
+    </div>
 
-  <hr>
+    <div class="prose">
+      <p>«Волошкове поле» закінчувалося вночі двадцять восьмого травня 2014 року, на дорозі до Дніпропетровська, обіцянкою повернутися. Ця книжка — про те, чим це повернення виявилося.</p>
+      <p>Тут майже немає бою. Це книжка про тил окупованого міста: про облік, про черги, про папери й про ту швидкість, з якою нормальні люди звикають до ненормального. Про те, що місто здають не за один день.</p>
+      <p>Навесні чотирнадцятого ще все хиталося, і кожен другий вірив, що якось розсмокчеться; а до вересня все вже стояло на місці — гарнізон у місті, порядок наведено, списки складено, діти пішли в школу під іншу музику. Три місяці. Стільки потрібно, щоб мільйонне європейське місто перестало бути собою.</p>
+      <p>Автор довго вважав, що пише про них. З'ясувалося, що книжка більш ніж наполовину про нас, — і саме тому вона писалася важче за першу.</p>
+    </div>
 
-  <section>
-    <blockquote>
-      <p>«Місто здають не там, де стріляють, а там, де вранці відкривають контору і ставлять печатку.»</p>
-      <cite>Передмова</cite>
-    </blockquote>
-  </section>
+    <div class="epigraph">
+      <p>«Ubi solitudinem faciunt, pacem appellant». Роблять пустелю і називають це миром.</p>
+      <cite>Тацит · епіграф до книги</cite>
+    </div>
+  </div>
+</section>
 
-  <section>
-    <details>
-      <summary>Зміст</summary>
-      <p class="pt">Частина перша. Місто, яке вдавало</p>
+<section class="toc" id="contents">
+  <div class="col">
+    <div class="head">
+      <span class="no">II</span>
+      <h2>Зміст</h2>
+    </div>
+
+    <div class="part">
+      <h3>Частина перша</h3>
+      <p class="pt">Місто, яке вдавало</p>
       <ol>
-        <li><b>1</b> «Гусь-Хрустальний»</li>
-        <li><b>2</b> «Документи»</li>
-        <li><b>3</b> «Три назви»</li>
-        <li><b>4</b> «Сорок копійок»</li>
+        <li><span class="n">1</span><span class="t">«Гусь-Хрустальний»</span><span class="lead"></span><span class="d">24 травня</span></li>
+        <li><span class="n">2</span><span class="t">«Документи»</span><span class="lead"></span><span class="d">29 травня — 2 червня</span></li>
+        <li><span class="n">3</span><span class="t">«Три назви»</span><span class="lead"></span><span class="d">відступ</span></li>
+        <li><span class="n">4</span><span class="t">«Сорок копійок»</span><span class="lead"></span><span class="d">11–14 червня</span></li>
       </ol>
-      <p class="pt">Частина друга. Липень</p>
-      <ol>
-        <li><b>5</b> «Сім днів»</li>
-        <li><b>6</b> «П'яте липня»</li>
-        <li><b>7</b> «Шістнадцяте»</li>
-        <li><b>8</b> «Сімнадцяте»</li>
-        <li><b>9</b> «Слух»</li>
-      </ol>
-      <p class="pt">Частина третя. Серпень</p>
-      <ol>
-        <li><b>10</b> «Море»</li>
-        <li><b>11</b> «Ключі»</li>
-        <li><b>12</b> «Довідка»</li>
-        <li><b>13</b> «Міжміський»</li>
-        <li><b>14</b> «Двадцять четверте»</li>
-        <li><b>15</b> «Аварійна бригада»</li>
-      </ol>
-      <p class="pt">Частина четверта. Одинадцять років</p>
-      <ol>
-        <li><b>16</b> «Грудень»</li>
-        <li><b>17</b> «Третій поверх»</li>
-        <li><b>·</b> Післямова</li>
-        <li><b>·</b> Від автора</li>
-      </ol>
-    </details>
-  </section>
+    </div>
 
-  <section id="order">
-    <div class="book">
-      <img src="assets/cover.png" alt="Обкладинка книги" width="700" height="990" loading="lazy">
-      <div class="d">
-        <p class="price">200 грн</p>
-        <p>150 сторінок, з автографом.</p>
-        <p>Повна передплата, доставка Новою поштою. Після замовлення надішлемо реквізити.</p>
+    <div class="part">
+      <h3>Частина друга</h3>
+      <p class="pt">Липень</p>
+      <ol>
+        <li><span class="n">5</span><span class="t">«Сім днів»</span><span class="lead"></span><span class="d">20–30 червня</span></li>
+        <li><span class="n">6</span><span class="t">«П'яте липня»</span><span class="lead"></span><span class="d">5–12 липня</span></li>
+        <li><span class="n">7</span><span class="t">«Шістнадцяте»</span><span class="lead"></span><span class="d">16 липня</span></li>
+        <li><span class="n">8</span><span class="t">«Сімнадцяте»</span><span class="lead"></span><span class="d">17–20 липня</span></li>
+        <li><span class="n">9</span><span class="t">«Слух»</span><span class="lead"></span><span class="d">липень — серпень</span></li>
+      </ol>
+    </div>
+
+    <div class="part">
+      <h3>Частина третя</h3>
+      <p class="pt">Серпень</p>
+      <ol>
+        <li><span class="n">10</span><span class="t">«Море»</span><span class="lead"></span><span class="d">серпень</span></li>
+        <li><span class="n">11</span><span class="t">«Ключі»</span><span class="lead"></span><span class="d">липень — серпень</span></li>
+        <li><span class="n">12</span><span class="t">«Довідка»</span><span class="lead"></span><span class="d">12–14 серпня</span></li>
+        <li><span class="n">13</span><span class="t">«Міжміський»</span><span class="lead"></span><span class="d">і всі роки після</span></li>
+        <li><span class="n">14</span><span class="t">«Двадцять четверте»</span><span class="lead"></span><span class="d">22–31 серпня</span></li>
+        <li><span class="n">15</span><span class="t">«Аварійна бригада»</span><span class="lead"></span><span class="d">літо — осінь</span></li>
+      </ol>
+    </div>
+
+    <div class="part">
+      <h3>Частина четверта</h3>
+      <p class="pt">Одинадцять років</p>
+      <ol>
+        <li><span class="n">16</span><span class="t">«Грудень»</span><span class="lead"></span><span class="d">грудень — і далі</span></li>
+        <li><span class="n">17</span><span class="t">«Третій поверх»</span><span class="lead"></span><span class="d">2019 — липень 2025</span></li>
+        <li><span class="n">·</span><span class="t">Післямова</span><span class="lead"></span><span class="d">про назву</span></li>
+        <li><span class="n">·</span><span class="t">Від автора</span><span class="lead"></span><span class="d">чотири епізоди</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col excerpt">
+    <div class="head">
+      <span class="no">III</span>
+      <h2>Фрагмент</h2>
+    </div>
+
+    <div class="prose">
+      <p>Я ось що хочу, щоб залишилося з цієї глави. Не мої роздуми про арифметику. Не доповіді.</p>
+      <p>Дві жінки. Одна — з шостого поверху, з білими занавісками, яка кричала вниз на людей із автоматами, тому що в дворі були діти. Друга — бабця біля розбитого під'їзду, яка не знала слова «Град», зате з першого разу зрозуміла головне.</p>
+      <p>Це в моєму місті влітку чотирнадцятого року і була вся протиповітряна оборона.</p>
+    </div>
+    <p class="who">Глава дев'ята · «Слух»</p>
+  </div>
+</section>
+
+<section class="order" id="order">
+  <div class="wide">
+    <div class="head">
+      <span class="no">IV</span>
+      <h2>Замовлення</h2>
+    </div>
+
+    <div class="order-in">
+      <div class="shelf">
+        <img src="assets/cover.png" alt="Обкладинка книги «Я знаю, що ви робили влітку чотирнадцятого»" width="700" height="990" loading="lazy">
+        <div class="spec">
+          <dl>
+            <dt>Автор</dt><dd>В'ячеслав Муністер</dd>
+            <dt>Жанр</dt><dd>Роман-репортаж</dd>
+            <dt>Обсяг</dt><dd>150 сторінок</dd>
+            <dt>Мова</dt><dd>українська</dd>
+            <dt>Примірник</dt><dd>з автографом</dd>
+          </dl>
+          <p class="price"><b>200 ₴</b><span>доставка Новою поштою</span></p>
+        </div>
+      </div>
+
+      <form id="order-form"
+            data-token="7131811282:AAH9f-KqTA1e8R_icty9KVzvD5tLpAnSSro"
+            data-chat="871897952" data-price="200">
+        <p class="ft">Замовити примірник</p>
+        <p class="fs">Повна передплата. Після замовлення надішлемо реквізити для переказу.</p>
+
+        <div class="row two">
+          <div>
+            <label for="qty">Кількість</label>
+            <input type="number" id="qty" name="qty" min="1" value="1" required inputmode="numeric">
+          </div>
+          <div>
+            <label for="donation">Донат, ₴</label>
+            <input type="number" id="donation" name="donation" min="0" value="0" inputmode="numeric">
+          </div>
+        </div>
+        <div class="row">
+          <label for="fio">Прізвище, ім'я, по батькові</label>
+          <input type="text" id="fio" name="fio" required autocomplete="name" placeholder="Як у Новій пошті">
+        </div>
+        <div class="row two">
+          <div>
+            <label for="phone">Телефон</label>
+            <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="+380 99 123 45 67">
+          </div>
+          <div>
+            <label for="np_city">Місто</label>
+            <input type="text" id="np_city" name="np_city" required placeholder="Київ">
+          </div>
+        </div>
+        <div class="row">
+          <label for="np_number">Відділення Нової пошти</label>
+          <input type="text" id="np_number" name="np_number" required inputmode="numeric" placeholder="12">
+        </div>
+
+        <p class="sum">До сплати <b id="total-sum">200 ₴</b></p>
+        <button type="submit">Замовити</button>
+        <p class="msg" id="order-message" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wide">
+    <div class="f-top">
+      <div class="f-book">
+        <p class="fh">Я знаю, що ви робили <em>влітку чотирнадцятого</em></p>
+        <p class="fa">В'ячеслав Муністер · роман-репортаж · 150 сторінок</p>
+      </div>
+
+      <div class="f-col">
+        <h4>Книга</h4>
+        <ul>
+          <li><a href="#order">Купити примірник</a></li>
+          <li><a href="#contents">Зміст</a></li>
+          <li class="muted">Волошкове поле — перша книга</li>
+          <li class="muted">Третя книга — у роботі</li>
+        </ul>
+      </div>
+
+      <div class="f-col">
+        <h4>Доставка</h4>
+        <ul>
+          <li class="muted">Нова пошта, по Україні</li>
+          <li class="muted">Повна передплата</li>
+          <li class="muted">Відправлення — щотижня</li>
+        </ul>
       </div>
     </div>
 
-    <form id="order-form"
-          data-token="7131811282:AAH9f-KqTA1e8R_icty9KVzvD5tLpAnSSro"
-          data-chat="871897952" data-price="200">
-      <p class="ft">Замовлення</p>
-      <div class="row two">
-        <div>
-          <label for="qty">Кількість</label>
-          <input type="number" id="qty" name="qty" min="1" value="1" required inputmode="numeric">
-        </div>
-        <div>
-          <label for="donation">Донат, грн</label>
-          <input type="number" id="donation" name="donation" min="0" value="0" inputmode="numeric">
-        </div>
+    <div class="f-bottom">
+      <div class="f-mark">
+        <svg viewBox="0 0 200 200" fill="none" stroke="#93a8d8" aria-hidden="true">
+          <circle cx="100" cy="100" r="72" stroke-width="4"/>
+          <circle cx="100" cy="100" r="14" stroke-width="4"/>
+        </svg>
+        <span>Донецьк · літо 2014</span>
       </div>
-      <div class="row">
-        <label for="fio">Прізвище, ім'я, по батькові</label>
-        <input type="text" id="fio" name="fio" required autocomplete="name">
-      </div>
-      <div class="row two">
-        <div>
-          <label for="phone">Телефон</label>
-          <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel">
-        </div>
-        <div>
-          <label for="np_city">Місто</label>
-          <input type="text" id="np_city" name="np_city" required>
-        </div>
-      </div>
-      <div class="row">
-        <label for="np_number">Відділення Нової пошти</label>
-        <input type="text" id="np_number" name="np_number" required inputmode="numeric">
-      </div>
-      <button type="submit">Замовити за <span id="total-sum">200</span> грн</button>
-      <p class="msg" id="order-message" role="status" aria-live="polite"></p>
-    </form>
-  </section>
-
-  <footer>В'ячеслав Муністер · книга друга · 2026</footer>
-
-</div>
+      <span>© 2026 В'ячеслав Муністер. Усі права застережено.</span>
+    </div>
+  </div>
+</footer>
 
 <script>
 (function(){
@@ -286,6 +508,14 @@ footer{padding:28px 0 40px;color:var(--ink-3);font-size:.9rem;text-align:center}
   g.innerHTML=html;
 })();
 
+/* верхня планка з'являється, коли обкладинка пішла з екрана */
+(function(){
+  var bar=document.getElementById('bar'), cover=document.querySelector('.cover');
+  new IntersectionObserver(function(es){
+    bar.classList.toggle('show',!es[0].isIntersecting);
+  },{threshold:0}).observe(cover);
+})();
+
 (function(){
   var form=document.getElementById('order-form');
   var price=parseInt(form.dataset.price,10)||200;
@@ -296,7 +526,7 @@ footer{padding:28px 0 40px;color:var(--ink-3);font-size:.9rem;text-align:center}
     if(isNaN(q)||q<1)q=1; if(isNaN(d)||d<0)d=0;
     return price*q+d;
   }
-  function refresh(){totalEl.textContent=total()}
+  function refresh(){totalEl.textContent=total()+' ₴'}
   form.qty.addEventListener('input',refresh);
   form.donation.addEventListener('input',refresh);
   refresh();
