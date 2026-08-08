@@ -35,13 +35,11 @@ function createConfig(overrides = {}) {
     dataFile: overrides.dataFile || join(dataDirectory, 'orders.json'),
     allowedOrigins: new Set(origins),
     bookPrice: envNumber(overrides.bookPrice ?? process.env.BOOK_PRICE, 250),
-    novaPoshtaApiKey: overrides.novaPoshtaApiKey ?? process.env.NOVAPOSHTA_API_KEY ?? '',
     telegramBotToken: overrides.telegramBotToken ?? process.env.TELEGRAM_BOT_TOKEN ?? '',
     telegramChatId: String(overrides.telegramChatId ?? process.env.TELEGRAM_CHAT_ID ?? ''),
     telegramWebhookSecret: overrides.telegramWebhookSecret ?? process.env.TELEGRAM_WEBHOOK_SECRET ?? '',
     fetch: overrides.fetch || globalThis.fetch,
-    sendTelegram: overrides.sendTelegram || null,
-    novaRequest: overrides.novaRequest || null
+    sendTelegram: overrides.sendTelegram || null
   };
 }
 
@@ -291,10 +289,7 @@ function validateOrder(payload, bookPrice) {
     total: quantity * bookPrice + donation,
     deliveryMode,
     city: '',
-    cityRef: '',
-    settlementRef: '',
     deliveryPoint: '',
-    deliveryPointRef: '',
     abroadAddress: ''
   };
 
@@ -303,12 +298,9 @@ function validateOrder(payload, bookPrice) {
     if (order.abroadAddress.length < 8) throw new ApiError(422, 'Вкажіть повну адресу для доставки за кордон.');
   } else {
     order.city = normalizeText(payload.city, 160);
-    order.cityRef = normalizeText(payload.cityRef, 100);
-    order.settlementRef = normalizeText(payload.settlementRef, 100);
     order.deliveryPoint = normalizeText(payload.deliveryPoint, 320);
-    order.deliveryPointRef = normalizeText(payload.deliveryPointRef, 100);
-    if (!order.city || (!order.cityRef && !order.settlementRef) || !order.deliveryPoint || !order.deliveryPointRef) {
-      throw new ApiError(422, 'Оберіть населений пункт і точку доставки зі списку.');
+    if (!order.city || !order.deliveryPoint) {
+      throw new ApiError(422, 'Вкажіть місто та відділення або поштомат.');
     }
   }
 
@@ -337,66 +329,6 @@ function orderNotification(order) {
     '',
     'Статус: нове'
   ].join('\n');
-}
-
-function createNovaClient(config) {
-  const cache = new Map();
-
-  async function request(modelName, calledMethod, methodProperties) {
-    if (!config.novaPoshtaApiKey) throw new ApiError(503, 'Доставка тимчасово недоступна. Спробуйте трохи пізніше.');
-    const response = await config.fetch('https://api.novaposhta.ua/v2.0/json/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apiKey: config.novaPoshtaApiKey, modelName, calledMethod, methodProperties })
-    });
-    const payload = await response.json().catch(() => null);
-    if (!response.ok || !payload?.success) throw new ApiError(503, 'Нова пошта тимчасово недоступна. Спробуйте пізніше.');
-    return payload.data || [];
-  }
-
-  async function cached(key, loader) {
-    const current = cache.get(key);
-    if (current && current.expiresAt > Date.now()) return current.value;
-    const value = await loader();
-    cache.set(key, { value, expiresAt: Date.now() + 5 * 60 * 1000 });
-    return value;
-  }
-
-  return {
-    async cities(query) {
-      const normalized = normalizeText(query, 80);
-      if (normalized.length < 2) return [];
-      return cached(`cities:${normalized.toLowerCase()}`, async () => {
-        const data = await request('Address', 'searchSettlements', { CityName: normalized, Limit: '10' });
-        return (data[0]?.Addresses || []).slice(0, 10).map((item) => ({
-          label: item.Present,
-          cityRef: item.DeliveryCity || '',
-          settlementRef: item.Ref || ''
-        })).filter((item) => item.label && (item.cityRef || item.settlementRef));
-      });
-    },
-    async points({ cityRef, settlementRef, type }) {
-      const normalizedType = type === 'parcel_locker' ? 'parcel_locker' : 'branch';
-      const normalizedCityRef = normalizeText(cityRef, 100);
-      const normalizedSettlementRef = normalizeText(settlementRef, 100);
-      if (!normalizedCityRef && !normalizedSettlementRef) throw new ApiError(422, 'Оберіть населений пункт зі списку.');
-      const cacheKey = `warehouses:${normalizedCityRef}:${normalizedSettlementRef}`;
-      const warehouses = await cached(cacheKey, async () => {
-        const props = normalizedCityRef ? { CityRef: normalizedCityRef } : { SettlementRef: normalizedSettlementRef };
-        return request('Address', 'getWarehouses', { ...props, Limit: '500', Page: '1' });
-      });
-      const category = normalizedType === 'parcel_locker' ? 'Postomat' : 'Branch';
-      return warehouses
-        .filter((item) => item.CategoryOfWarehouse === category)
-        .sort((left, right) => (Number.parseInt(left.Number, 10) || 0) - (Number.parseInt(right.Number, 10) || 0))
-        .map((item) => ({
-          ref: item.Ref,
-          label: item.Description,
-          shortAddress: item.ShortAddress || '',
-          number: item.Number || ''
-        }));
-    }
-  };
 }
 
 function createTelegramClient(config) {
@@ -430,7 +362,6 @@ export function createOrderService(overrides = {}) {
   const config = createConfig(overrides);
   const store = createStore(config.dataFile);
   const limiter = createRateLimiter();
-  const nova = config.novaRequest || createNovaClient(config);
   const telegram = createTelegramClient(config);
 
   async function handleOrder(request, response, corsOrigin) {
@@ -467,18 +398,6 @@ export function createOrderService(overrides = {}) {
       if (!cors.allowed) throw new ApiError(403, 'Доступ заборонено.');
       if (request.method === 'OPTIONS') return sendOptions(response, corsOrigin);
       if (request.method === 'GET' && url.pathname === '/healthz') return sendJson(response, 200, { ok: true }, corsOrigin);
-      if (request.method === 'GET' && url.pathname === '/api/novaposhta/cities') {
-        return sendJson(response, 200, { items: await nova.cities(url.searchParams.get('q') || '') }, corsOrigin);
-      }
-      if (request.method === 'GET' && url.pathname === '/api/novaposhta/points') {
-        return sendJson(response, 200, {
-          items: await nova.points({
-            cityRef: url.searchParams.get('cityRef') || '',
-            settlementRef: url.searchParams.get('settlementRef') || '',
-            type: url.searchParams.get('type') || 'branch'
-          })
-        }, corsOrigin);
-      }
       if (request.method === 'POST' && url.pathname === '/api/orders') return await handleOrder(request, response, corsOrigin);
       if (request.method === 'POST' && url.pathname === '/api/telegram/webhook') return await handleTelegramWebhook(request, response, corsOrigin);
       throw new ApiError(404, 'Не знайдено.');

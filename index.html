@@ -198,18 +198,11 @@ section{padding:clamp(54px,9vw,92px) 0}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 .order-form label,.order-form legend{display:block;font-size:.85rem;color:var(--ink-2);margin:0 0 6px}
 .order-form fieldset{border:0;margin:0;padding:0}
-.order-form input,.order-form select,.order-form textarea{
+.order-form input,.order-form textarea{
   width:100%;padding:11px 13px;background:#fbfaf7;border:1px solid var(--rule);border-radius:3px;
   font-family:var(--sans);font-size:1rem;color:var(--ink);transition:border-color .18s,box-shadow .18s;
 }
-.order-form input:focus,.order-form select:focus,.order-form textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,74,154,.13)}
-.order-form select{
-  appearance:none;-webkit-appearance:none;cursor:pointer;
-  background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
-  background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;
-  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
-}
-.order-form select:disabled{color:var(--ink-3);cursor:default;opacity:.75}
+.order-form input:focus,.order-form textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,74,154,.13)}
 .order-form textarea{resize:vertical;line-height:1.6}
 .order-form [hidden]{display:none!important}
 .order-basics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;align-items:end;margin-bottom:19px}
@@ -239,18 +232,7 @@ section{padding:clamp(54px,9vw,92px) 0}
 .delivery-switch input:checked + span,.seg input:checked + span{border-color:var(--blue);background:rgba(47,74,154,.08);color:var(--blue)}
 .delivery-switch input:focus-visible + span,.seg input:focus-visible + span{box-shadow:0 0 0 3px rgba(47,74,154,.18)}
 .delivery-block{margin-top:17px}
-.np{position:relative}
-.np-list{
-  list-style:none;margin:4px 0 0;padding:0;position:absolute;left:0;right:0;z-index:20;
-  background:#fff;border:1px solid var(--rule);border-radius:3px;max-height:250px;overflow-y:auto;
-  box-shadow:0 12px 28px -12px rgba(25,25,32,.35);display:none;
-}
-.np-list.open{display:block}
-.np-list li{padding:10px 13px;font-size:.95rem;cursor:pointer;border-bottom:1px solid var(--rule-soft);line-height:1.4}
-.np-list li:last-child{border-bottom:0}
-.np-list li:hover,.np-list li[aria-selected="true"]{background:rgba(47,74,154,.08);color:var(--blue)}
 .hint{margin-top:6px;font-size:.85rem;color:var(--ink-3);line-height:1.5}
-.hint.err{color:#a33223}
 .order-total{
   margin:20px 0 0;padding-top:16px;border-top:1px solid var(--rule-soft);
   display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;color:var(--ink-2);
@@ -317,14 +299,11 @@ footer{
   .order-form{padding:22px 18px}
   .row{margin-bottom:18px}
   .order-form label,.order-form legend{font-size:.92rem;margin-bottom:7px}
-  .order-form input,.order-form select,.order-form textarea{font-size:16px;padding:14px;min-height:52px}
-  .order-form select{background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%}
+  .order-form input,.order-form textarea{font-size:16px;padding:14px;min-height:52px}
   .order-form textarea{min-height:96px}
   .order-basics{gap:12px}
   .qty-control input{min-height:50px;padding:8px}
   .qty-step{height:50px;min-height:50px;padding:0}
-  .np-list{position:static;max-height:none;box-shadow:none;margin-top:8px}
-  .np-list li{padding:14px 13px;min-height:52px;font-size:1rem}
   .seg{grid-template-columns:1fr 1fr 1fr;gap:6px}
   .seg span{min-height:54px;font-size:.9rem}
   .delivery-switch span{min-height:56px;font-size:.78rem;line-height:1.25}
@@ -466,19 +445,17 @@ footer{
           </div>
 
           <div class="delivery-block" id="np-block">
-            <div class="row np">
-              <label for="np_city">Населений пункт</label>
-              <input type="text" id="np_city" name="np_city" required autocomplete="off" placeholder="Почніть вводити назву" aria-autocomplete="list" aria-controls="np-list">
-              <ul id="np-list" class="np-list" role="listbox"></ul>
-              <p class="hint" id="np-hint">Оберіть місто зі списку, щоб побачити доступні точки.</p>
+            <div class="row two">
+              <div>
+                <label for="np_city">Місто</label>
+                <input type="text" id="np_city" name="np_city" required autocomplete="address-level2" placeholder="Київ">
+              </div>
+              <div>
+                <label for="delivery_point" id="delivery-point-label">Відділення</label>
+                <input type="text" id="delivery_point" name="delivery_point" required autocomplete="off" placeholder="№ 12 або адреса">
+              </div>
             </div>
-
-            <div class="row">
-              <label for="delivery_point" id="delivery-point-label">Відділення</label>
-              <select id="delivery_point" name="delivery_point" required disabled>
-                <option value="">Спершу оберіть населений пункт</option>
-              </select>
-            </div>
+            <p class="hint" id="np-hint">Вкажіть місто та номер або адресу точки Нової пошти.</p>
           </div>
 
           <div class="delivery-block" id="abroad-block" hidden>
@@ -621,7 +598,7 @@ footer{
   d.addEventListener('toggle',function(){w.textContent=d.open?'Згорнути':'Розгорнути'});
 })();
 
-/* ————— оформлення та Нова пошта ————— */
+/* ————— оформлення замовлення ————— */
 (function(){
   var form=document.getElementById('order-form');
   if(!form) return;
@@ -636,16 +613,12 @@ footer{
   var msg=document.getElementById('order-message');
   var submit=document.querySelector('.order-submit');
   var cityInput=document.getElementById('np_city');
-  var cityList=document.getElementById('np-list');
   var hint=document.getElementById('np-hint');
-  var pointSelect=document.getElementById('delivery_point');
+  var pointInput=document.getElementById('delivery_point');
   var pointLabel=document.getElementById('delivery-point-label');
   var npBlock=document.getElementById('np-block');
   var abroadBlock=document.getElementById('abroad-block');
   var abroadAddress=document.getElementById('abroad_addr');
-  var selectedCity=null;
-  var selectedPoint=null;
-  var timer=null;
 
   function request(path,options){
     return fetch(api+path,options).then(function(response){
@@ -678,129 +651,28 @@ footer{
     msg.textContent=text||'';
   }
 
-  function closeCities(){
-    cityList.classList.remove('open');
-    cityList.replaceChildren();
-  }
-
-  function resetPoints(text){
-    selectedPoint=null;
-    pointSelect.replaceChildren(new Option(text,''));
-    pointSelect.disabled=true;
-  }
-
-  function currentPointName(){
-    return selectedMode()==='parcel_locker'?'поштомат':'відділення';
-  }
-
-  function loadPoints(){
-    if(!selectedCity){resetPoints('Спершу оберіть населений пункт');return}
-    var mode=selectedMode();
-    if(mode==='abroad') return;
-    resetPoints('Завантажуємо…');
-    hint.className='hint';
-    hint.textContent='Перевіряємо доступні точки Нової пошти.';
-    var query=new URLSearchParams({
-      cityRef:selectedCity.cityRef||'',
-      settlementRef:selectedCity.settlementRef||'',
-      type:mode
-    });
-    request('/novaposhta/points?'+query.toString()).then(function(data){
-      var items=data.items||[];
-      if(!items.length){
-        resetPoints('Нічого не знайдено');
-        hint.className='hint err';
-        hint.textContent='У цьому населеному пункті немає доступних точок цього типу.';
-        return;
-      }
-      pointSelect.replaceChildren(new Option('Оберіть '+currentPointName(),''));
-      items.forEach(function(item){
-        var option=new Option(item.label,item.label);
-        option.dataset.ref=item.ref;
-        pointSelect.add(option);
-      });
-      pointSelect.disabled=false;
-      hint.className='hint';
-      hint.textContent='Доставка Новою поштою по Україні. Пересилку оплачує отримувач.';
-    }).catch(function(error){
-      resetPoints('Не вдалося завантажити');
-      hint.className='hint err';
-      hint.textContent=error.message||'Нова пошта тимчасово недоступна.';
-    });
-  }
-
-  function chooseCity(item){
-    selectedCity=item;
-    cityInput.value=item.label;
-    cityInput.setCustomValidity('');
-    closeCities();
-    loadPoints();
-  }
-
-  function showCities(items){
-    cityList.replaceChildren();
-    if(!items.length){closeCities();return}
-    items.forEach(function(item){
-      var option=document.createElement('li');
-      option.setAttribute('role','option');
-      option.textContent=item.label;
-      option.addEventListener('mousedown',function(event){event.preventDefault();chooseCity(item)});
-      cityList.appendChild(option);
-    });
-    cityList.classList.add('open');
-  }
-
-  function searchCities(){
-    var query=cityInput.value.trim();
-    selectedCity=null;
-    selectedPoint=null;
-    cityInput.setCustomValidity('');
-    resetPoints('Спершу оберіть населений пункт');
-    clearTimeout(timer);
-    if(query.length<2){closeCities();return}
-    timer=setTimeout(function(){
-      request('/novaposhta/cities?q='+encodeURIComponent(query)).then(function(data){
-        showCities(data.items||[]);
-        if(!(data.items||[]).length){
-          hint.className='hint err';
-          hint.textContent='Населений пункт не знайдено. Спробуйте інше написання.';
-        }
-      }).catch(function(error){
-        closeCities();
-        hint.className='hint err';
-        hint.textContent=error.message||'Не вдалося завантажити підказки.';
-      });
-    },260);
-  }
-
   function updateDeliveryMode(){
     var mode=selectedMode();
     var abroad=mode==='abroad';
     npBlock.hidden=abroad;
     abroadBlock.hidden=!abroad;
     cityInput.required=!abroad;
-    pointSelect.required=!abroad;
+    pointInput.required=!abroad;
     abroadAddress.required=abroad;
-    pointLabel.textContent=mode==='parcel_locker'?'Поштомат':'Відділення';
-    if(abroad){
-      closeCities();
-      hint.className='hint';
-      return;
-    }
-    if(selectedCity) loadPoints();
-    else resetPoints('Спершу оберіть населений пункт');
+    var locker=mode==='parcel_locker';
+    pointLabel.textContent=locker?'Поштомат':'Відділення';
+    pointInput.placeholder=locker?'№ 1001 або адреса':'№ 12 або адреса';
+    hint.textContent=locker
+      ?'Вкажіть місто та номер або адресу поштомата Нової пошти.'
+      :'Вкажіть місто та номер або адресу відділення Нової пошти.';
   }
 
   function resetCheckout(){
     form.reset();
     qty.value=1;
     donation.value=0;
-    selectedCity=null;
-    selectedPoint=null;
     donationRow.hidden=true;
     donationToggle.setAttribute('aria-expanded','false');
-    cityInput.setCustomValidity('');
-    resetPoints('Спершу оберіть населений пункт');
     updateDeliveryMode();
     refreshTotal();
   }
@@ -820,32 +692,12 @@ footer{
     donationRow.hidden=!open;
     if(open) donation.focus();
   });
-  cityInput.addEventListener('input',searchCities);
-  cityInput.addEventListener('blur',function(){setTimeout(closeCities,120)});
-  pointSelect.addEventListener('change',function(){
-    var option=pointSelect.options[pointSelect.selectedIndex];
-    selectedPoint=option&&option.dataset.ref?{label:option.value,ref:option.dataset.ref}:null;
-  });
   form.querySelectorAll('input[name="delivery_mode"]').forEach(function(input){input.addEventListener('change',updateDeliveryMode)});
 
   form.addEventListener('submit',function(event){
     event.preventDefault();
     setMessage('');
     var mode=selectedMode();
-    if(mode!=='abroad'&&!selectedCity){
-      cityInput.setCustomValidity('Оберіть населений пункт зі списку.');
-      cityInput.reportValidity();
-      cityInput.setCustomValidity('');
-      setMessage('Оберіть населений пункт зі списку підказок.','err');
-      return;
-    }
-    if(mode!=='abroad'&&!selectedPoint){
-      pointSelect.setCustomValidity('Оберіть точку доставки.');
-      pointSelect.reportValidity();
-      pointSelect.setCustomValidity('');
-      setMessage('Оберіть '+currentPointName()+'.','err');
-      return;
-    }
     if(!form.reportValidity()) return;
 
     var buttonText=submit.textContent;
@@ -863,11 +715,8 @@ footer{
         quantity:parseInt(qty.value||1,10),
         donation:parseInt(donation.value||0,10)||0,
         deliveryMode:mode,
-        city:selectedCity?selectedCity.label:'',
-        cityRef:selectedCity?selectedCity.cityRef:'',
-        settlementRef:selectedCity?selectedCity.settlementRef:'',
-        deliveryPoint:selectedPoint?selectedPoint.label:'',
-        deliveryPointRef:selectedPoint?selectedPoint.ref:'',
+        city:cityInput.value,
+        deliveryPoint:pointInput.value,
         abroadAddress:abroadAddress.value,
         website:form.website.value
       })

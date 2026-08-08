@@ -46,10 +46,8 @@ test('stores a parcel-locker order and returns Telegram statistics', async () =>
         quantity: 2,
         donation: 50,
         deliveryMode: 'parcel_locker',
-        city: 'м. Київ, Київська обл.',
-        cityRef: 'city-ref',
-        deliveryPoint: 'Поштомат Нова Пошта №1001',
-        deliveryPointRef: 'locker-ref'
+        city: 'Київ',
+        deliveryPoint: '№1001, вул. Хрещатик, 1'
       })
     });
     const created = await submission.json();
@@ -57,7 +55,9 @@ test('stores a parcel-locker order and returns Telegram statistics', async () =>
     assert.equal(submission.status, 201);
     assert.equal(created.ok, true);
     assert.match(created.id, /^K14-\d{8}-[A-F0-9]{6}$/);
-    assert.equal((await app.service.store.list()).length, 1);
+    const [storedOrder] = await app.service.store.list();
+    assert.equal(storedOrder.city, 'Київ');
+    assert.equal(storedOrder.deliveryPoint, '№1001, вул. Хрещатик, 1');
     assert.match(app.messages[0].text, /Поштомат НП/);
 
     const stats = await fetch(`${app.endpoint}/api/telegram/webhook`, {
