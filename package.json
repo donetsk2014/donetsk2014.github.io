@@ -1,0 +1,9 @@
+{
+  "name": "donetsk2014-book-ordering",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:orders": "node server/order-service.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

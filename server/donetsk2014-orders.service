@@ -1,0 +1,24 @@
+[Unit]
+Description=Donetsk 2014 book orders and Telegram statistics
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+WorkingDirectory=/opt/donetsk2014-orders
+ExecStart=/usr/bin/node /opt/donetsk2014-orders/server/order-service.mjs
+Restart=on-failure
+RestartSec=3
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/donetsk2014-orders.env
+StateDirectory=donetsk2014-orders
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/donetsk2014-orders
+
+[Install]
+WantedBy=multi-user.target
