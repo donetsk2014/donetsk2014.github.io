@@ -127,6 +127,29 @@ section{padding:clamp(54px,9vw,92px) 0}
 
 /* ————— зміст ————— */
 .toc{background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.toc-fold summary{
+  list-style:none;cursor:pointer;display:flex;align-items:flex-end;justify-content:space-between;
+  gap:20px;padding:6px 0 18px;border-bottom:1px solid var(--rule);
+}
+.toc-fold summary::-webkit-details-marker{display:none}
+.toc-fold .sum-h{display:block;font-family:var(--display);font-size:clamp(1.6rem,4.4vw,2.3rem);line-height:1.2}
+.toc-fold .sum-act{
+  flex:none;display:inline-flex;align-items:center;gap:10px;color:var(--blue);
+  padding-bottom:5px;transition:opacity .2s;
+}
+.toc-fold summary:hover .sum-act{opacity:.7}
+.toc-fold .sum-sign{
+  width:15px;height:15px;position:relative;display:inline-block;
+}
+.toc-fold .sum-sign::before,.toc-fold .sum-sign::after{
+  content:"";position:absolute;background:var(--blue);transition:transform .25s ease;
+}
+.toc-fold .sum-sign::before{left:0;right:0;top:7px;height:1px}
+.toc-fold .sum-sign::after{top:0;bottom:0;left:7px;width:1px}
+.toc-fold[open] .sum-sign::after{transform:scaleY(0)}
+.toc-fold[open] .sum-word::after{content:""}
+.toc-body{padding-top:clamp(24px,4vw,34px);animation:fold .3s ease}
+@keyframes fold{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .part{margin-top:clamp(26px,4vw,38px)}
 .part:first-of-type{margin-top:0}
 .part h3{
@@ -211,8 +234,22 @@ textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(4
   display:flex;align-items:center;gap:10px;margin:4px 0 0;cursor:pointer;
   font-size:.95rem;color:var(--ink-2);
 }
-.check input{width:18px;height:18px;flex:none;accent-color:var(--blue);cursor:pointer;padding:0}
+.check input{width:22px;height:22px;flex:none;accent-color:var(--blue);cursor:pointer;padding:0}
 .sum em{font-style:normal;font-size:.85rem;color:var(--ink-3)}
+.pay-note{margin-top:8px}
+.ship{margin-top:10px;font-size:.88rem;color:var(--ink-3);line-height:1.5}
+
+/* перемикач месенджера */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg label{margin:0;cursor:pointer}
+.seg input{position:absolute;opacity:0;width:0;height:0}
+.seg span{
+  display:flex;align-items:center;justify-content:center;min-height:50px;padding:6px 4px;
+  border:1px solid var(--rule);border-radius:3px;background:#fbfaf7;
+  font-size:.95rem;color:var(--ink-2);text-align:center;transition:.18s;
+}
+.seg input:checked + span{border-color:var(--blue);background:rgba(47,74,154,.08);color:var(--blue)}
+.seg input:focus-visible + span{box-shadow:0 0 0 3px rgba(47,74,154,.18)}
 .sum{
   margin:20px 0 0;padding-top:16px;border-top:1px solid var(--rule-soft);
   display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;color:var(--ink-2);
@@ -265,12 +302,27 @@ footer{
 @media(max-width:540px){
   body{font-size:17px}
   .col,.wide{padding:0 20px}
-  .two{grid-template-columns:1fr}
-  input{font-size:16px;padding:13px}
+  .two{grid-template-columns:1fr;gap:14px}
   .toc .lead{display:none}
   .toc li{flex-wrap:wrap}
   .toc .d{width:100%;padding-left:calc(1.7em + 10px)}
   .prose p:first-of-type::first-line{font-variant:normal}
+  .toc-fold summary{flex-direction:column;align-items:flex-start;gap:12px}
+  .toc-fold .sum-act{padding-bottom:0}
+
+  /* форма: зручний ввід з телефона */
+  form{padding:22px 18px}
+  .row{margin-bottom:18px}
+  label{font-size:.92rem;margin-bottom:7px}
+  input,select,textarea{font-size:16px;padding:14px;min-height:52px}
+  select{background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%}
+  textarea{min-height:96px}
+  .np-list{position:static;max-height:none;box-shadow:none;margin-top:8px}
+  .np-list li{padding:14px 13px;min-height:52px;font-size:1rem}
+  .seg{grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .seg span{min-height:54px;font-size:.9rem}
+  button{padding:18px;min-height:56px;font-size:1.05rem}
+  .check{padding:6px 0;min-height:48px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -332,10 +384,16 @@ footer{
 
 <section class="toc" id="contents">
   <div class="col">
-    <div class="head">
-      <span class="no mono">II · Сімнадцять глав</span>
-      <h2>Зміст</h2>
-    </div>
+    <details class="toc-fold">
+      <summary>
+        <span class="sum-text">
+          <span class="no mono">II · Сімнадцять глав</span>
+          <span class="sum-h">Зміст</span>
+        </span>
+        <span class="sum-act mono"><span class="sum-word">Розгорнути</span><span class="sum-sign"></span></span>
+      </summary>
+
+      <div class="toc-body">
 
     <div class="part">
       <h3>Частина перша</h3>
@@ -383,6 +441,9 @@ footer{
         <li><span class="n">·</span><span class="t">Від автора</span><span class="lead"></span><span class="d">чотири епізоди</span></li>
       </ol>
     </div>
+
+      </div>
+    </details>
   </div>
 </section>
 
@@ -420,7 +481,8 @@ footer{
             <dt>Мова</dt><dd>українська</dd>
             <dt>Примірник</dt><dd>з автографом</dd>
           </dl>
-          <p class="price"><b>250 ₴</b><span>доставка Новою поштою</span></p>
+          <p class="price"><b>250 ₴</b><span>+ пересилка за тарифом НП</span></p>
+          <p class="ship">Доставка Новою поштою по Україні. Пересилку оплачує отримувач.</p>
         </div>
       </div>
 
@@ -446,7 +508,24 @@ footer{
         </div>
         <div class="row">
           <label for="phone">Телефон</label>
-          <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="+380 99 123 45 67">
+          <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel"
+                 placeholder="+380 99 123 45 67">
+          <p class="hint">На цей номер надішлемо рахунок на оплату.</p>
+        </div>
+
+        <div class="row">
+          <label for="messenger">Де з вами зв'язатися</label>
+          <div class="seg" id="messenger-seg">
+            <label><input type="radio" name="messenger" value="Viber" checked><span>Viber</span></label>
+            <label><input type="radio" name="messenger" value="WhatsApp"><span>WhatsApp</span></label>
+            <label><input type="radio" name="messenger" value="Telegram"><span>Telegram</span></label>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="messenger_phone">Номер у месенджері</label>
+          <input type="tel" id="messenger_phone" name="messenger_phone" inputmode="tel"
+                 placeholder="Якщо інший, ніж вище">
         </div>
 
         <div id="ua-block">
@@ -481,6 +560,7 @@ footer{
         </label>
 
         <p class="sum">До сплати <b id="total-sum">250 ₴</b> <em id="sum-note"></em></p>
+        <p class="hint pay-note">Пересилку оплачує отримувач при отриманні.</p>
         <button type="submit">Замовити</button>
         <p class="msg" id="order-message" role="status" aria-live="polite"></p>
       </form>
@@ -521,6 +601,13 @@ footer{
           '" x2="'+(100+Math.cos(a)*r2).toFixed(1)+'" y2="'+(100+Math.sin(a)*r2).toFixed(1)+'"/>';
   }
   g.innerHTML=html;
+})();
+
+/* зміст: підпис кнопки */
+(function(){
+  var d=document.querySelector('.toc-fold'), w=d&&d.querySelector('.sum-word');
+  if(!d||!w) return;
+  d.addEventListener('toggle',function(){w.textContent=d.open?'Згорнути':'Розгорнути'});
 })();
 
 /* ————— Нова пошта ————— */
@@ -669,12 +756,14 @@ footer{
       '_Я знаю, що ви робили влітку чотирнадцятого_\n\n'+
       '📚 Кількість: '+parseInt(form.qty.value||1,10)+' шт.\n'+
       '👤 ПІБ: '+(form.fio.value||'—')+'\n'+
-      '📱 Телефон: '+(form.phone.value||'—')+'\n'+
+      '📱 Телефон (рахунок): '+(form.phone.value||'—')+'\n'+
+      '💬 '+(form.messenger.value||'—')+': '+(form.messenger_phone.value||form.phone.value||'—')+'\n'+
       (form.abroad.checked
         ? '🌍 *ЗА КОРДОН*\n'+(form.abroad_addr.value||'—')+'\n'
         : '📮 НП: '+(form.np_city.value||'—')+'\n        '+(form.np_number.value||'—')+'\n')+
       '💰 Донат: '+parseInt(form.donation.value||0,10)+' грн\n'+
-      '\n*Разом: '+total()+' грн'+(form.abroad.checked?' + пересилка':'')+'*';
+      '\n*Разом за книги: '+total()+' грн*\n'+
+      '🚚 Пересилка — за рахунок отримувача';
 
     btn.disabled=true; msg.className='msg'; msg.textContent='Надсилаємо…';
     fetch('https://api.telegram.org/bot'+form.dataset.token+'/sendMessage',{
