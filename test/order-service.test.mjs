@@ -12,6 +12,9 @@ async function boot() {
   const service = createOrderService({
     dataDirectory: directory,
     allowedOrigins: ['https://donetsk2014.github.io'],
+    adminOrigin: 'https://ivengo.munister.com.ua',
+    adminUsername: 'admin',
+    adminPassword: 'admin-test-password',
     telegramChatId: '871897952',
     telegramWebhookSecret: 'test-webhook-secret',
     sendTelegram: async (message) => messages.push(message)
@@ -141,6 +144,61 @@ test('requires a usable city and a manually entered delivery point', async () =>
     const payload = await response.json();
     assert.equal(response.status, 422);
     assert.match(payload.error, /місто доставки/);
+  } finally {
+    await app.close();
+  }
+});
+
+test('protects the admin panel and updates order status', async () => {
+  const app = await boot();
+  try {
+    const orderPayload = {
+      customerName: 'Ірина Адмінська',
+      phone: '+380 99 222 33 44',
+      contactChannel: 'Telegram',
+      quantity: 1,
+      donation: 0,
+      requestId: 'admin-test-001',
+      deliveryMode: 'branch',
+      city: 'Київ',
+      deliveryPoint: '№12'
+    };
+    const createdResponse = await fetch(`${app.endpoint}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: 'https://donetsk2014.github.io' },
+      body: JSON.stringify(orderPayload)
+    });
+    const created = await createdResponse.json();
+    const unauthorized = await fetch(`${app.endpoint}/api/admin/orders`);
+    assert.equal(unauthorized.status, 401);
+    assert.match(unauthorized.headers.get('www-authenticate'), /Basic/);
+
+    const authorization = `Basic ${Buffer.from('admin:admin-test-password').toString('base64')}`;
+    const page = await fetch(`${app.endpoint}/admin/`, { headers: { Authorization: authorization } });
+    assert.equal(page.status, 200);
+    assert.match(await page.text(), /Кабінет замовлень/);
+
+    const listResponse = await fetch(`${app.endpoint}/api/admin/orders`, {
+      headers: { Authorization: authorization, Origin: 'https://ivengo.munister.com.ua' }
+    });
+    const list = await listResponse.json();
+    assert.equal(listResponse.status, 200);
+    assert.equal(list.orders.length, 1);
+    assert.equal('requestId' in list.orders[0], false);
+
+    const updateResponse = await fetch(`${app.endpoint}/api/admin/orders/${created.id}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: authorization,
+        Origin: 'https://ivengo.munister.com.ua',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: 'confirmed' })
+    });
+    const updated = await updateResponse.json();
+    assert.equal(updateResponse.status, 200);
+    assert.equal(updated.order.status, 'confirmed');
+    assert.equal((await app.service.store.list())[0].status, 'confirmed');
   } finally {
     await app.close();
   }

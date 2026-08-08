@@ -4,11 +4,14 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { adminPage } from './admin-page.mjs';
+
 const MAX_BODY_BYTES = 16_000;
 const ORDER_LIMIT = 5;
 const ORDER_WINDOW_MS = 15 * 60 * 1000;
 const DELIVERY_MODES = new Set(['branch', 'parcel_locker', 'abroad']);
 const CONTACT_CHANNELS = new Set(['Viber', 'Telegram', 'WhatsApp', 'Phone']);
+const ORDER_STATUSES = new Set(['new', 'confirmed', 'paid', 'shipped', 'completed', 'cancelled']);
 const KYIV_TIME_ZONE = 'Europe/Kyiv';
 
 class ApiError extends Error {
@@ -34,6 +37,9 @@ function createConfig(overrides = {}) {
     port: envNumber(overrides.port ?? process.env.PORT, 5081),
     dataFile: overrides.dataFile || join(dataDirectory, 'orders.json'),
     allowedOrigins: new Set(origins),
+    adminOrigin: overrides.adminOrigin ?? process.env.ADMIN_ORIGIN ?? 'https://ivengo.munister.com.ua',
+    adminUsername: overrides.adminUsername ?? process.env.ADMIN_USERNAME ?? 'admin',
+    adminPassword: overrides.adminPassword ?? process.env.ADMIN_PASSWORD ?? '',
     bookPrice: envNumber(overrides.bookPrice ?? process.env.BOOK_PRICE, 250),
     telegramBotToken: overrides.telegramBotToken ?? process.env.TELEGRAM_BOT_TOKEN ?? '',
     telegramChatId: String(overrides.telegramChatId ?? process.env.TELEGRAM_CHAT_ID ?? ''),
@@ -128,6 +134,19 @@ function createStore(file) {
     async list() {
       await queue;
       return (await readState()).orders;
+    },
+    async updateStatus(id, status) {
+      const operation = queue.then(async () => {
+        const state = await readState();
+        const order = state.orders.find((item) => item.id === id);
+        if (!order) throw new ApiError(404, 'Замовлення не знайдено.');
+        order.status = status;
+        order.updatedAt = new Date().toISOString();
+        await writeState(state);
+        return order;
+      });
+      queue = operation.catch(() => undefined);
+      return operation;
     }
   };
 }
@@ -164,15 +183,16 @@ function readBody(request) {
 
 function resolveCors(request, config) {
   const origin = String(request.headers.origin || '');
-  return { origin, allowed: !origin || config.allowedOrigins.has(origin) };
+  return { origin, allowed: !origin || config.allowedOrigins.has(origin) || origin === config.adminOrigin };
 }
 
-function sendJson(response, status, payload, corsOrigin = '') {
+function sendJson(response, status, payload, corsOrigin = '', extraHeaders = {}) {
   const headers = {
     'Cache-Control': 'no-store',
     'Content-Type': 'application/json; charset=utf-8',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'X-Content-Type-Options': 'nosniff'
+    'X-Content-Type-Options': 'nosniff',
+    ...extraHeaders
   };
   if (corsOrigin) {
     headers['Access-Control-Allow-Origin'] = corsOrigin;
@@ -184,6 +204,18 @@ function sendJson(response, status, payload, corsOrigin = '') {
   response.end(JSON.stringify(payload));
 }
 
+function sendHtml(response, status, payload, extraHeaders = {}) {
+  response.writeHead(status, {
+    'Cache-Control': 'no-store',
+    'Content-Type': 'text/html; charset=utf-8',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    ...extraHeaders
+  });
+  response.end(payload);
+}
+
 function sendOptions(response, corsOrigin) {
   response.writeHead(204, {
     'Access-Control-Allow-Origin': corsOrigin,
@@ -193,6 +225,32 @@ function sendOptions(response, corsOrigin) {
     Vary: 'Origin'
   });
   response.end();
+}
+
+function getBasicCredentials(request) {
+  const authorization = String(request.headers.authorization || '');
+  if (!authorization.startsWith('Basic ')) return null;
+  try {
+    const decoded = Buffer.from(authorization.slice(6), 'base64').toString('utf8');
+    const separator = decoded.indexOf(':');
+    if (separator < 1) return null;
+    return { username: decoded.slice(0, separator), password: decoded.slice(separator + 1) };
+  } catch {
+    return null;
+  }
+}
+
+function hasAdminAccess(request, config) {
+  const credentials = getBasicCredentials(request);
+  return Boolean(credentials
+    && safeEqual(config.adminUsername, credentials.username)
+    && safeEqual(config.adminPassword, credentials.password));
+}
+
+function sendAdminUnauthorized(response, corsOrigin, html = false) {
+  const challenge = { 'WWW-Authenticate': 'Basic realm="Order Desk"' };
+  if (html) return sendHtml(response, 401, '<!doctype html><title>Авторизація</title>', challenge);
+  return sendJson(response, 401, { ok: false, error: 'Потрібна авторизація.' }, corsOrigin, challenge);
 }
 
 function kyivDateKey(date = new Date()) {
@@ -360,6 +418,31 @@ function commandReply(text, orders) {
   return '';
 }
 
+function adminOrderView(order) {
+  const { requestId, ...view } = order;
+  return view;
+}
+
+async function handleAdminPage(request, response, config) {
+  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, '', true);
+  return sendHtml(response, 200, adminPage);
+}
+
+async function handleAdminOrders(request, response, config, store, corsOrigin) {
+  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, corsOrigin);
+  const orders = await store.list();
+  return sendJson(response, 200, { ok: true, orders: orders.map(adminOrderView) }, corsOrigin);
+}
+
+async function handleAdminStatus(request, response, config, store, corsOrigin, id) {
+  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, corsOrigin);
+  const payload = await readBody(request);
+  const status = normalizeText(payload.status, 24);
+  if (!ORDER_STATUSES.has(status)) throw new ApiError(422, 'Невідомий статус замовлення.');
+  const order = await store.updateStatus(id, status);
+  return sendJson(response, 200, { ok: true, order: adminOrderView(order) }, corsOrigin);
+}
+
 export function createOrderService(overrides = {}) {
   const config = createConfig(overrides);
   const store = createStore(config.dataFile);
@@ -402,6 +485,18 @@ export function createOrderService(overrides = {}) {
       if (!cors.allowed) throw new ApiError(403, 'Доступ заборонено.');
       if (request.method === 'OPTIONS') return sendOptions(response, corsOrigin);
       if (request.method === 'GET' && url.pathname === '/healthz') return sendJson(response, 200, { ok: true }, corsOrigin);
+      if (request.method === 'GET' && (url.pathname === '/admin' || url.pathname === '/admin/')) return await handleAdminPage(request, response, config);
+      if (request.method === 'GET' && url.pathname === '/api/admin/orders') return await handleAdminOrders(request, response, config, store, corsOrigin);
+      const adminStatusMatch = url.pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
+      if (request.method === 'PATCH' && adminStatusMatch) {
+        let id;
+        try {
+          id = decodeURIComponent(adminStatusMatch[1]);
+        } catch {
+          throw new ApiError(400, 'Некоректний номер замовлення.');
+        }
+        return await handleAdminStatus(request, response, config, store, corsOrigin, id);
+      }
       if (request.method === 'POST' && url.pathname === '/api/orders') return await handleOrder(request, response, corsOrigin);
       if (request.method === 'POST' && url.pathname === '/api/telegram/webhook') return await handleTelegramWebhook(request, response, corsOrigin);
       throw new ApiError(404, 'Не знайдено.');
