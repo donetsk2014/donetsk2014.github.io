@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4f1ea"/>
+  <g fill="none" stroke="#d9d3c6" stroke-width="1">
+    <circle cx="970" cy="315" r="390"/>
+    <circle cx="970" cy="315" r="300"/>
+    <path d="M0 100h720M0 530h720"/>
+  </g>
+  <path d="M78 113h44" stroke="#2f4a9a" stroke-width="3"/>
+  <text x="78" y="91" fill="#77746e" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="3">РОМАН-РЕПОРТАЖ · В'ЯЧЕСЛАВ МУНІСТЕР</text>
+  <text x="78" y="201" fill="#191920" font-family="Georgia, serif" font-size="62">Я знаю, що</text>
+  <text x="78" y="278" fill="#2f4a9a" font-family="Georgia, serif" font-size="62">ви робили влітку</text>
+  <text x="78" y="355" fill="#2f4a9a" font-family="Georgia, serif" font-size="63" font-style="italic">чотирнадцятого</text>
+  <path d="M78 402h88" stroke="#d9d3c6" stroke-width="2"/>
+  <text x="78" y="449" fill="#3c3c45" font-family="Georgia, serif" font-size="25">Хроніка літа 2014: місто, яке втратило</text>
+  <text x="78" y="482" fill="#3c3c45" font-family="Georgia, serif" font-size="25">приватне життя.</text>
+  <text x="78" y="558" fill="#77746e" font-family="Arial, sans-serif" font-size="15" letter-spacing="2.6">DONETSK2014.GITHUB.IO</text>
+  <rect x="818" y="48" width="364" height="534" fill="#e4dfd4"/>
+  <image href="cover.png" x="830" y="58" width="340" height="481" preserveAspectRatio="xMidYMid meet"/>
+</svg>
