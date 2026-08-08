@@ -393,11 +393,14 @@ function deliveryLabel(order) {
 
 function orderNotification(order) {
   return [
-    `📕 Нове замовлення ${order.id}`,
-    order.product,
+    `⚡ НОВЕ ЗАМОВЛЕННЯ · ${order.id}`,
+    `${order.quantity} прим. · ${formatNumber(order.total)} ₴`,
+    deliveryLabel(order),
     '',
     `Кількість: ${order.quantity} шт.`,
     `Разом: ${formatNumber(order.total)} ₴${order.donation ? ` (донат ${formatNumber(order.donation)} ₴)` : ''}`,
+    '',
+    order.product,
     '',
     `Покупець: ${order.customerName}`,
     `Телефон: ${order.phone}`,
@@ -416,7 +419,7 @@ function createTelegramClient(config) {
     const response = await config.fetch(`https://api.telegram.org/bot${config.telegramBotToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true })
+      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true, disable_notification: false })
     });
     const payload = await response.json().catch(() => null);
     if (!response.ok || !payload?.ok) throw new Error('Telegram delivery failed');

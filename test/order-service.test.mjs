@@ -62,6 +62,7 @@ test('stores a parcel-locker order and returns Telegram statistics', async () =>
     const [storedOrder] = await app.service.store.list();
     assert.equal(storedOrder.city, 'Київ');
     assert.equal(storedOrder.deliveryPoint, '№1001, вул. Хрещатик, 1');
+    assert.match(app.messages[0].text, /НОВЕ ЗАМОВЛЕННЯ/);
     assert.match(app.messages[0].text, /Поштомат НП/);
 
     const retry = await fetch(`${app.endpoint}/api/orders`, {
