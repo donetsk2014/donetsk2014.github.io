@@ -171,15 +171,23 @@ test('protects the admin panel and updates order status', async () => {
     const created = await createdResponse.json();
     const unauthorized = await fetch(`${app.endpoint}/api/admin/orders`);
     assert.equal(unauthorized.status, 401);
-    assert.match(unauthorized.headers.get('www-authenticate'), /Basic/);
+    assert.match((await unauthorized.json()).error, /Увійдіть/);
 
-    const authorization = `Basic ${Buffer.from('admin:admin-test-password').toString('base64')}`;
-    const page = await fetch(`${app.endpoint}/admin/`, { headers: { Authorization: authorization } });
+    const login = await fetch(`${app.endpoint}/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: 'https://ivengo.munister.com.ua' },
+      body: JSON.stringify({ username: 'admin', password: 'admin-test-password' })
+    });
+    assert.equal(login.status, 200);
+    const cookie = login.headers.get('set-cookie').split(';')[0];
+    assert.match(cookie, /^order_admin_session=/);
+
+    const page = await fetch(`${app.endpoint}/admin/`, { headers: { Cookie: cookie } });
     assert.equal(page.status, 200);
     assert.match(await page.text(), /Кабінет замовлень/);
 
     const listResponse = await fetch(`${app.endpoint}/api/admin/orders`, {
-      headers: { Authorization: authorization, Origin: 'https://ivengo.munister.com.ua' }
+      headers: { Cookie: cookie, Origin: 'https://ivengo.munister.com.ua' }
     });
     const list = await listResponse.json();
     assert.equal(listResponse.status, 200);
@@ -189,7 +197,7 @@ test('protects the admin panel and updates order status', async () => {
     const updateResponse = await fetch(`${app.endpoint}/api/admin/orders/${created.id}`, {
       method: 'PATCH',
       headers: {
-        Authorization: authorization,
+        Cookie: cookie,
         Origin: 'https://ivengo.munister.com.ua',
         'Content-Type': 'application/json'
       },

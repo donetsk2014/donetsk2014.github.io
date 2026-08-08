@@ -4,7 +4,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { adminPage } from './admin-page.mjs';
+import { adminPage, loginPage } from './admin-page.mjs';
 
 const MAX_BODY_BYTES = 16_000;
 const ORDER_LIMIT = 5;
@@ -13,6 +13,7 @@ const DELIVERY_MODES = new Set(['branch', 'parcel_locker', 'abroad']);
 const CONTACT_CHANNELS = new Set(['Viber', 'Telegram', 'WhatsApp', 'Phone']);
 const ORDER_STATUSES = new Set(['new', 'confirmed', 'paid', 'shipped', 'completed', 'cancelled']);
 const KYIV_TIME_ZONE = 'Europe/Kyiv';
+const ADMIN_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
 class ApiError extends Error {
   constructor(status, message) {
@@ -91,6 +92,45 @@ function createRateLimiter() {
       active.push(now);
       attempts.set(key, active);
       return true;
+    }
+  };
+}
+
+function adminSessionCookie(token, maxAge = Math.floor(ADMIN_SESSION_TTL_MS / 1000)) {
+  return `order_admin_session=${token}; Path=/donetsk-orders; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Strict`;
+}
+
+function getCookies(request) {
+  return String(request.headers.cookie || '').split(';').reduce((cookies, entry) => {
+    const separator = entry.indexOf('=');
+    if (separator > 0) cookies[entry.slice(0, separator).trim()] = entry.slice(separator + 1).trim();
+    return cookies;
+  }, {});
+}
+
+function createAdminSessions() {
+  const sessions = new Map();
+
+  function removeExpired() {
+    const now = Date.now();
+    for (const [token, expiry] of sessions) if (expiry <= now) sessions.delete(token);
+  }
+
+  return {
+    create() {
+      removeExpired();
+      const token = randomBytes(32).toString('base64url');
+      sessions.set(token, Date.now() + ADMIN_SESSION_TTL_MS);
+      return token;
+    },
+    has(request) {
+      removeExpired();
+      const token = getCookies(request).order_admin_session;
+      return Boolean(token && sessions.has(token));
+    },
+    destroy(request) {
+      const token = getCookies(request).order_admin_session;
+      if (token) sessions.delete(token);
     }
   };
 }
@@ -196,7 +236,7 @@ function sendJson(response, status, payload, corsOrigin = '', extraHeaders = {})
   };
   if (corsOrigin) {
     headers['Access-Control-Allow-Origin'] = corsOrigin;
-    headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
+    headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, OPTIONS';
     headers['Access-Control-Allow-Headers'] = 'Content-Type';
     headers.Vary = 'Origin';
   }
@@ -219,7 +259,7 @@ function sendHtml(response, status, payload, extraHeaders = {}) {
 function sendOptions(response, corsOrigin) {
   response.writeHead(204, {
     'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '600',
     Vary: 'Origin'
@@ -227,30 +267,8 @@ function sendOptions(response, corsOrigin) {
   response.end();
 }
 
-function getBasicCredentials(request) {
-  const authorization = String(request.headers.authorization || '');
-  if (!authorization.startsWith('Basic ')) return null;
-  try {
-    const decoded = Buffer.from(authorization.slice(6), 'base64').toString('utf8');
-    const separator = decoded.indexOf(':');
-    if (separator < 1) return null;
-    return { username: decoded.slice(0, separator), password: decoded.slice(separator + 1) };
-  } catch {
-    return null;
-  }
-}
-
-function hasAdminAccess(request, config) {
-  const credentials = getBasicCredentials(request);
-  return Boolean(credentials
-    && safeEqual(config.adminUsername, credentials.username)
-    && safeEqual(config.adminPassword, credentials.password));
-}
-
-function sendAdminUnauthorized(response, corsOrigin, html = false) {
-  const challenge = { 'WWW-Authenticate': 'Basic realm="Order Desk"' };
-  if (html) return sendHtml(response, 401, '<!doctype html><title>Авторизація</title>', challenge);
-  return sendJson(response, 401, { ok: false, error: 'Потрібна авторизація.' }, corsOrigin, challenge);
+function sendAdminUnauthorized(response, corsOrigin) {
+  return sendJson(response, 401, { ok: false, error: 'Увійдіть до кабінету, щоб продовжити.' }, corsOrigin);
 }
 
 function kyivDateKey(date = new Date()) {
@@ -423,19 +441,35 @@ function adminOrderView(order) {
   return view;
 }
 
-async function handleAdminPage(request, response, config) {
-  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, '', true);
+async function handleAdminPage(request, response, sessions) {
+  if (!sessions.has(request)) return sendHtml(response, 200, loginPage);
   return sendHtml(response, 200, adminPage);
 }
 
-async function handleAdminOrders(request, response, config, store, corsOrigin) {
-  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, corsOrigin);
+async function handleAdminLogin(request, response, config, sessions, corsOrigin) {
+  const payload = await readBody(request);
+  const username = normalizeText(payload.username, 120);
+  const password = String(payload.password || '');
+  if (!safeEqual(config.adminUsername, username) || !safeEqual(config.adminPassword, password)) {
+    return sendJson(response, 401, { ok: false, error: 'Перевірте логін і пароль.' }, corsOrigin);
+  }
+  const token = sessions.create();
+  return sendJson(response, 200, { ok: true }, corsOrigin, { 'Set-Cookie': adminSessionCookie(token) });
+}
+
+async function handleAdminLogout(request, response, sessions, corsOrigin) {
+  sessions.destroy(request);
+  return sendJson(response, 200, { ok: true }, corsOrigin, { 'Set-Cookie': adminSessionCookie('', 0) });
+}
+
+async function handleAdminOrders(request, response, sessions, store, corsOrigin) {
+  if (!sessions.has(request)) return sendAdminUnauthorized(response, corsOrigin);
   const orders = await store.list();
   return sendJson(response, 200, { ok: true, orders: orders.map(adminOrderView) }, corsOrigin);
 }
 
-async function handleAdminStatus(request, response, config, store, corsOrigin, id) {
-  if (!hasAdminAccess(request, config)) return sendAdminUnauthorized(response, corsOrigin);
+async function handleAdminStatus(request, response, sessions, store, corsOrigin, id) {
+  if (!sessions.has(request)) return sendAdminUnauthorized(response, corsOrigin);
   const payload = await readBody(request);
   const status = normalizeText(payload.status, 24);
   if (!ORDER_STATUSES.has(status)) throw new ApiError(422, 'Невідомий статус замовлення.');
@@ -447,6 +481,7 @@ export function createOrderService(overrides = {}) {
   const config = createConfig(overrides);
   const store = createStore(config.dataFile);
   const limiter = createRateLimiter();
+  const adminSessions = createAdminSessions();
   const telegram = createTelegramClient(config);
 
   async function handleOrder(request, response, corsOrigin) {
@@ -485,8 +520,10 @@ export function createOrderService(overrides = {}) {
       if (!cors.allowed) throw new ApiError(403, 'Доступ заборонено.');
       if (request.method === 'OPTIONS') return sendOptions(response, corsOrigin);
       if (request.method === 'GET' && url.pathname === '/healthz') return sendJson(response, 200, { ok: true }, corsOrigin);
-      if (request.method === 'GET' && (url.pathname === '/admin' || url.pathname === '/admin/')) return await handleAdminPage(request, response, config);
-      if (request.method === 'GET' && url.pathname === '/api/admin/orders') return await handleAdminOrders(request, response, config, store, corsOrigin);
+      if (request.method === 'GET' && (url.pathname === '/admin' || url.pathname === '/admin/')) return await handleAdminPage(request, response, adminSessions);
+      if (request.method === 'POST' && url.pathname === '/admin/login') return await handleAdminLogin(request, response, config, adminSessions, corsOrigin);
+      if (request.method === 'POST' && url.pathname === '/admin/logout') return await handleAdminLogout(request, response, adminSessions, corsOrigin);
+      if (request.method === 'GET' && url.pathname === '/api/admin/orders') return await handleAdminOrders(request, response, adminSessions, store, corsOrigin);
       const adminStatusMatch = url.pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
       if (request.method === 'PATCH' && adminStatusMatch) {
         let id;
@@ -495,7 +532,7 @@ export function createOrderService(overrides = {}) {
         } catch {
           throw new ApiError(400, 'Некоректний номер замовлення.');
         }
-        return await handleAdminStatus(request, response, config, store, corsOrigin, id);
+        return await handleAdminStatus(request, response, adminSessions, store, corsOrigin, id);
       }
       if (request.method === 'POST' && url.pathname === '/api/orders') return await handleOrder(request, response, corsOrigin);
       if (request.method === 'POST' && url.pathname === '/api/telegram/webhook') return await handleTelegramWebhook(request, response, corsOrigin);

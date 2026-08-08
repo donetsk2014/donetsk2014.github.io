@@ -23,7 +23,7 @@ main{padding:42px 0 72px}.masthead{display:flex;justify-content:space-between;al
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap top-in"><div class="brand"><span class="mark" aria-hidden="true"><i></i></span><span class="brand-copy"><b>Літо 2014</b><span>Кабінет замовлень</span></span></div><span class="session">Захищений доступ</span></div></header>
+<header class="top"><div class="wrap top-in"><div class="brand"><span class="mark" aria-hidden="true"><i></i></span><span class="brand-copy"><b>Літо 2014</b><span>Кабінет замовлень</span></span></div><button class="session" id="logout" type="button">Вийти</button></div></header>
 <main class="wrap">
   <section class="masthead"><div><p class="eyebrow">Контроль видання</p><h1>Замовлення</h1></div><button class="refresh" id="refresh" type="button">Оновити</button></section>
   <section class="metrics" aria-label="Статистика"><div class="metric"><span>Усього заявок</span><strong id="metric-orders">—</strong></div><div class="metric"><span>Нові</span><strong class="blue" id="metric-new">—</strong></div><div class="metric"><span>Книг</span><strong id="metric-books">—</strong></div><div class="metric"><span>Сума заявок</span><strong id="metric-revenue">—</strong></div></section>
@@ -54,11 +54,30 @@ main{padding:42px 0 72px}.masthead{display:flex;justify-content:space-between;al
   function request(url,options){return fetch(url,Object.assign({credentials:'same-origin'},options||{})).then(function(response){return response.json().catch(function(){return {}}).then(function(data){if(!response.ok)throw new Error(data.error||'Не вдалося виконати запит.');return data})})}
   function load(){setMessage('');ordersNode.innerHTML='<p class="loading">Завантажуємо замовлення</p>';return request(api).then(function(data){orders=Array.isArray(data.orders)?data.orders.slice().sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt)}):[];render()}).catch(function(error){orders=[];renderMetrics();ordersNode.innerHTML='<p class="empty">Дані зараз недоступні.</p>';setMessage(error.message,'error')})}
   document.getElementById('refresh').addEventListener('click',load);
+  document.getElementById('logout').addEventListener('click',function(){fetch('./logout',{method:'POST',credentials:'same-origin'}).finally(function(){window.location.reload()})});
   search.addEventListener('input',render);
   document.getElementById('filters').addEventListener('click',function(event){var button=event.target.closest('[data-filter]');if(!button)return;activeFilter=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(function(item){item.classList.toggle('active',item===button)});render()});
   ordersNode.addEventListener('click',function(event){var button=event.target.closest('[data-save]');if(!button)return;var row=button.closest('[data-id]');var select=row.querySelector('select');var id=row.dataset.id;button.disabled=true;request(api+'/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:select.value})}).then(function(data){orders=orders.map(function(order){return order.id===data.order.id?data.order:order});setMessage('Статус збережено.','ok');render()}).catch(function(error){setMessage(error.message,'error')}).then(function(){button.disabled=false})});
   load();
 })();
 </script>
+</body>
+</html>`;
+
+export const loginPage = `<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#191920">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Вхід | Літо 2014</title>
+<style>
+:root{--paper:#f4f1ea;--ink:#191920;--rule:#d7d0c3;--blue:#2f4a9a;--red:#9e3a38;--serif:Georgia,'Times New Roman',serif;--sans:Arial,Helvetica,sans-serif}*{box-sizing:border-box}body{min-height:100vh;margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 var(--sans);display:grid;place-items:center;padding:24px}.sheet{width:min(100%,460px);border-top:3px solid var(--ink);padding-top:25px}.mark{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--ink);border-radius:50%;font:700 16px/1 var(--serif)}p{margin:0}.eyebrow{margin-top:25px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}h1{margin:8px 0 31px;font:400 clamp(2.35rem,9vw,4rem)/.95 var(--serif)}label{display:block;margin:0 0 16px;font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}input{display:block;width:100%;height:48px;margin-top:7px;border:1px solid var(--rule);border-radius:0;background:#fff;color:var(--ink);padding:0 13px;font:16px var(--sans)}input:focus{outline:3px solid rgba(47,74,154,.2);outline-offset:2px}.submit{width:100%;height:49px;border:1px solid var(--blue);border-radius:0;background:var(--blue);color:#fff;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.submit:disabled{opacity:.65}.error{min-height:22px;margin:16px 0 0;color:var(--red);font-size:13px}.note{margin-top:30px;padding-top:15px;border-top:1px solid var(--rule);color:#77726b;font-size:12px}@media(max-width:480px){body{padding:20px}.sheet{padding-top:20px}}
+</style>
+</head>
+<body>
+<main class="sheet"><div class="mark" aria-hidden="true">14</div><p class="eyebrow">Літо 2014</p><h1>Кабінет замовлень</h1><form id="login"><label>Логін<input name="username" autocomplete="username" required></label><label>Пароль<input name="password" type="password" autocomplete="current-password" required></label><button class="submit" type="submit">Увійти</button><p class="error" id="error" role="alert"></p></form><p class="note">Доступ лише для команди видання.</p></main>
+<script>(function(){var form=document.getElementById('login'),error=document.getElementById('error'),button=form.querySelector('button');form.addEventListener('submit',function(event){event.preventDefault();error.textContent='';button.disabled=true;var data=Object.fromEntries(new FormData(form));fetch('./login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(data)}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw new Error(payload.error||'Не вдалося увійти.');window.location.assign('./')})}).catch(function(reason){error.textContent=reason.message;button.disabled=false})})})();</script>
 </body>
 </html>`;
