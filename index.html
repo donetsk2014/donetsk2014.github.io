@@ -48,7 +48,8 @@
 .pill{
   display:inline-flex;align-items:center;gap:10px;border:1px solid var(--blue);border-radius:999px;
   padding:9px 24px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--blue);text-decoration:none;background:none;cursor:pointer;transition:background .25s,color .25s;
+  color:var(--blue);text-decoration:none;background:none;cursor:pointer;
+  transition:background .25s,color .25s,transform .18s,box-shadow .25s;
 }
 .pill:hover{background:var(--blue);color:var(--paper)}
 .pill.solid{background:var(--blue);color:var(--paper)}
@@ -68,23 +69,6 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
 
 .col{width:100%;max-width:var(--col);margin:0 auto;padding:0 26px}
 .wide{width:100%;max-width:var(--wide);margin:0 auto;padding:0 26px}
-
-/* ————— тонка верхня планка ————— */
-.bar{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  background:var(--paper);border-bottom:1px solid var(--rule);
-  box-shadow:0 2px 14px rgba(25,25,32,.06);
-  transform:translateY(-100%);transition:transform .3s ease;
-}
-.bar.show{transform:none}
-.bar-in{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 0}
-.bar .t{min-width:0}
-.bar .t .bt{
-  font-family:var(--display);font-size:1.06rem;color:var(--ink);line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.bar .t .ba{font-size:.84rem;color:var(--ink-3);line-height:1.3}
-.bar .pill{flex:none;padding:10px 22px;font-size:11px}
 
 /* ————— обкладинка ————— */
 .cover{padding:clamp(78px,13vw,140px) 0 clamp(56px,9vw,96px);text-align:center;position:relative}
@@ -107,7 +91,13 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
   font-family:var(--display);font-size:clamp(1.08rem,3vw,1.32rem);line-height:1.5;
 }
 .cover .sub small{display:block;margin-top:10px;font-size:.72em;font-family:var(--sans);color:var(--ink-3)}
-.cover .pill{margin-top:clamp(32px,5vw,46px);padding:13px 30px}
+.cover .pill{
+  margin-top:clamp(34px,5vw,48px);padding:20px 46px;
+  font-size:13px;letter-spacing:.24em;
+  box-shadow:0 12px 30px -8px rgba(47,74,154,.55);
+}
+.cover .pill:hover{transform:translateY(-2px);box-shadow:0 16px 34px -8px rgba(47,74,154,.6)}
+.cover .pill:active{transform:translateY(0)}
 
 /* ————— секції ————— */
 section{padding:clamp(54px,9vw,92px) 0}
@@ -210,8 +200,19 @@ select:disabled{color:var(--ink-3);cursor:default;opacity:.75}
 .np-list li:last-child{border-bottom:0}
 .np-list li:hover,.np-list li[aria-selected="true"]{background:rgba(47,74,154,.08);color:var(--blue)}
 .np-list li small{display:block;color:var(--ink-3);font-size:.82rem}
-.hint{margin-top:6px;font-size:.85rem;color:var(--ink-3)}
+.hint{margin-top:6px;font-size:.85rem;color:var(--ink-3);line-height:1.5}
 .hint.err{color:#a33223}
+textarea{
+  width:100%;padding:11px 13px;background:#fbfaf7;border:1px solid var(--rule);border-radius:3px;
+  font-family:var(--sans);font-size:1rem;color:var(--ink);resize:vertical;line-height:1.6;
+}
+textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,74,154,.13)}
+.check{
+  display:flex;align-items:center;gap:10px;margin:4px 0 0;cursor:pointer;
+  font-size:.95rem;color:var(--ink-2);
+}
+.check input{width:18px;height:18px;flex:none;accent-color:var(--blue);cursor:pointer;padding:0}
+.sum em{font-style:normal;font-size:.85rem;color:var(--ink-3)}
 .sum{
   margin:20px 0 0;padding-top:16px;border-top:1px solid var(--rule-soft);
   display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;color:var(--ink-2);
@@ -276,16 +277,6 @@ footer{
 </head>
 <body>
 
-<div class="bar" id="bar">
-  <div class="wide bar-in">
-    <div class="t">
-      <div class="bt">Я знаю, що ви робили влітку чотирнадцятого</div>
-      <div class="ba">В'ячеслав Муністер · роман-репортаж</div>
-    </div>
-    <a class="pill solid" href="#order">Купити · 250 ₴</a>
-  </div>
-</div>
-
 <header class="cover" id="top">
   <div class="col">
     <p class="imprint mono">Роман-репортаж &nbsp;·&nbsp; <b>книга друга</b></p>
@@ -297,7 +288,6 @@ footer{
     </h1>
 
     <div class="title-rule"></div>
-    <p class="en">I know what you did in the summer of 2014</p>
 
     <div class="emblem" aria-hidden="true">
       <svg viewBox="0 0 200 200" fill="none" stroke="#2f4a9a">
@@ -311,8 +301,7 @@ footer{
       </svg>
     </div>
 
-    <p class="sub">Хроніка літа 2014: місто, яке втратило приватне життя
-      <small>Chronicle of Summer 2014: The city that lost its private life</small></p>
+    <p class="sub">Хроніка літа 2014: місто, яке втратило приватне життя</p>
 
     <a class="pill solid" href="#order">Купити книгу · 250 ₴</a>
   </div>
@@ -416,7 +405,7 @@ footer{
 <section class="order" id="order">
   <div class="wide">
     <div class="head">
-      <span class="no mono">IV · Нова пошта, по Україні</span>
+      <span class="no mono">IV · Нова пошта та за кордон</span>
       <h2>Замовлення</h2>
     </div>
 
@@ -460,22 +449,38 @@ footer{
           <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="+380 99 123 45 67">
         </div>
 
-        <div class="row np">
-          <label for="np_city">Населений пункт</label>
-          <input type="text" id="np_city" name="np_city" required autocomplete="off"
-                 placeholder="Почніть вводити назву" aria-autocomplete="list" aria-controls="np-list">
-          <ul id="np-list" class="np-list" role="listbox"></ul>
-          <p class="hint" id="np-hint">Доставка Новою поштою по всій Україні</p>
+        <div id="ua-block">
+          <div class="row np">
+            <label for="np_city">Населений пункт</label>
+            <input type="text" id="np_city" name="np_city" required autocomplete="off"
+                   placeholder="Почніть вводити назву" aria-autocomplete="list" aria-controls="np-list">
+            <ul id="np-list" class="np-list" role="listbox"></ul>
+            <p class="hint" id="np-hint">Доставка Новою поштою по всій Україні</p>
+          </div>
+
+          <div class="row">
+            <label for="np_number">Відділення</label>
+            <select id="np_number" name="np_number" required disabled>
+              <option value="">Спершу оберіть населений пункт</option>
+            </select>
+          </div>
         </div>
 
-        <div class="row">
-          <label for="np_number">Відділення</label>
-          <select id="np_number" name="np_number" required disabled>
-            <option value="">Спершу оберіть населений пункт</option>
-          </select>
+        <div id="abroad-block" hidden>
+          <div class="row">
+            <label for="abroad_addr">Країна, місто, повна адреса, індекс</label>
+            <textarea id="abroad_addr" name="abroad_addr" rows="3"
+                      placeholder="Польща, Варшава, ul. Prosta 51, 00-838"></textarea>
+          </div>
+          <p class="hint">Вартість пересилки за кордон рахуємо окремо й повідомляємо перед оплатою.</p>
         </div>
 
-        <p class="sum">До сплати <b id="total-sum">250 ₴</b></p>
+        <label class="check">
+          <input type="checkbox" id="abroad" name="abroad">
+          <span>Я за межами України</span>
+        </label>
+
+        <p class="sum">До сплати <b id="total-sum">250 ₴</b> <em id="sum-note"></em></p>
         <button type="submit">Замовити</button>
         <p class="msg" id="order-message" role="status" aria-live="polite"></p>
       </form>
@@ -516,14 +521,6 @@ footer{
           '" x2="'+(100+Math.cos(a)*r2).toFixed(1)+'" y2="'+(100+Math.sin(a)*r2).toFixed(1)+'"/>';
   }
   g.innerHTML=html;
-})();
-
-/* верхня планка з'являється, коли обкладинка пішла з екрана */
-(function(){
-  var bar=document.getElementById('bar'), cover=document.querySelector('.cover');
-  new IntersectionObserver(function(es){
-    bar.classList.toggle('show',!es[0].isIntersecting);
-  },{threshold:0}).observe(cover);
 })();
 
 /* ————— Нова пошта ————— */
@@ -625,7 +622,22 @@ footer{
     if(cityInput.value.trim().length>=2 && !settlementRef) cityInput.dispatchEvent(new Event('input'));
   });
 
+  /* доставка за кордон */
+  var abroad=document.getElementById('abroad');
+  var uaBlock=document.getElementById('ua-block');
+  var abBlock=document.getElementById('abroad-block');
+  var addr=document.getElementById('abroad_addr');
+  var sumNote=document.getElementById('sum-note');
+  abroad.addEventListener('change',function(){
+    var out=abroad.checked;
+    uaBlock.hidden=out; abBlock.hidden=!out;
+    cityInput.required=!out; whSelect.required=!out; addr.required=out;
+    sumNote.textContent=out?'+ пересилка за кордон':'';
+    if(out) closeList();
+  });
+
   document.getElementById('order-form').addEventListener('submit',function(e){
+    if(abroad.checked) return;
     if(!cityRef && !settlementRef){
       e.stopPropagation();e.preventDefault();
       hint.className='hint err';hint.textContent='Оберіть населений пункт зі списку підказок.';
@@ -658,10 +670,11 @@ footer{
       '📚 Кількість: '+parseInt(form.qty.value||1,10)+' шт.\n'+
       '👤 ПІБ: '+(form.fio.value||'—')+'\n'+
       '📱 Телефон: '+(form.phone.value||'—')+'\n'+
-      '📮 НП: '+(form.np_city.value||'—')+'\n'+
-      '        '+(form.np_number.value||'—')+'\n'+
+      (form.abroad.checked
+        ? '🌍 *ЗА КОРДОН*\n'+(form.abroad_addr.value||'—')+'\n'
+        : '📮 НП: '+(form.np_city.value||'—')+'\n        '+(form.np_number.value||'—')+'\n')+
       '💰 Донат: '+parseInt(form.donation.value||0,10)+' грн\n'+
-      '\n*Разом: '+total()+' грн*';
+      '\n*Разом: '+total()+' грн'+(form.abroad.checked?' + пересилка':'')+'*';
 
     btn.disabled=true; msg.className='msg'; msg.textContent='Надсилаємо…';
     fetch('https://api.telegram.org/bot'+form.dataset.token+'/sendMessage',{
@@ -671,7 +684,7 @@ footer{
       if(!r.ok) throw new Error('tg');
       msg.className='msg ok';
       msg.textContent='Замовлення прийнято. Ми зв\'яжемося з вами найближчим часом.';
-      form.reset(); refresh(); document.getElementById("np_number").innerHTML="<option value=''>Спершу оберіть населений пункт</option>"; document.getElementById("np_number").disabled=true;
+      form.reset(); refresh(); form.abroad.dispatchEvent(new Event("change")); var w=document.getElementById("np_number"); w.innerHTML="<option value=''>Спершу оберіть населений пункт</option>"; w.disabled=true;
     }).catch(function(){
       msg.className='msg err';
       msg.textContent='Не вдалося надіслати. Спробуйте ще раз.';
