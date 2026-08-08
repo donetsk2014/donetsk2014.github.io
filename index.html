@@ -269,6 +269,29 @@ section{padding:clamp(54px,9vw,92px) 0}
 .msg.err{color:#a33223}
 .honeypot{position:absolute!important;inline-size:1px!important;block-size:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important}
 
+/* На широкому екрані оформлення читається як одна редакційна розгортка. */
+@media(min-width:1080px){
+  .order{padding-block:clamp(82px,8vw,128px)}
+  .order .wide{max-width:1240px}
+  .order .head{max-width:1100px;margin-inline:auto}
+  .order-in{
+    grid-template-columns:360px minmax(560px,620px);
+    justify-content:center;gap:clamp(68px,8vw,128px);
+  }
+  .shelf{padding-top:6px}
+  .shelf img{max-width:296px}
+  .spec{max-width:360px;margin:30px auto 0}
+  .order-form{
+    background:transparent;border:0;border-top:2px solid var(--blue);
+    padding:30px 0 4px;box-shadow:none;
+  }
+  .order-form .ft{font-size:1.65rem;margin-bottom:7px}
+  .order-form .fs{margin-bottom:28px;max-width:50ch}
+  .order-form input,.order-form textarea{background:rgba(255,255,255,.48);min-height:48px}
+  .order-basics{grid-template-columns:220px minmax(0,1fr);gap:22px;margin-bottom:23px}
+  .delivery-fieldset{margin-top:28px!important;padding-top:24px!important}
+}
+
 /* ————— підвал (форм-фактор EPRIS) ————— */
 footer{
   background:var(--dark);color:var(--dark-text);
