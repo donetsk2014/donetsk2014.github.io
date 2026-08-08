@@ -45,6 +45,7 @@ test('stores a parcel-locker order and returns Telegram statistics', async () =>
         contactChannel: 'Telegram',
         quantity: 2,
         donation: 50,
+        requestId: 'checkout-test-001',
         deliveryMode: 'parcel_locker',
         city: 'Київ',
         deliveryPoint: '№1001, вул. Хрещатик, 1'
@@ -59,6 +60,30 @@ test('stores a parcel-locker order and returns Telegram statistics', async () =>
     assert.equal(storedOrder.city, 'Київ');
     assert.equal(storedOrder.deliveryPoint, '№1001, вул. Хрещатик, 1');
     assert.match(app.messages[0].text, /Поштомат НП/);
+
+    const retry = await fetch(`${app.endpoint}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: 'https://donetsk2014.github.io'
+      },
+      body: JSON.stringify({
+        customerName: 'Ірина Тестова',
+        phone: '+380 99 123 45 67',
+        contactChannel: 'Telegram',
+        quantity: 2,
+        donation: 50,
+        requestId: 'checkout-test-001',
+        deliveryMode: 'parcel_locker',
+        city: 'Київ',
+        deliveryPoint: '№1001, вул. Хрещатик, 1'
+      })
+    });
+    const retried = await retry.json();
+    assert.equal(retry.status, 201);
+    assert.equal(retried.id, created.id);
+    assert.equal((await app.service.store.list()).length, 1);
+    assert.equal(app.messages.length, 1);
 
     const stats = await fetch(`${app.endpoint}/api/telegram/webhook`, {
       method: 'POST',
@@ -88,6 +113,34 @@ test('rejects orders submitted from another website origin', async () => {
       body: JSON.stringify({})
     });
     assert.equal(response.status, 403);
+  } finally {
+    await app.close();
+  }
+});
+
+test('requires a usable city and a manually entered delivery point', async () => {
+  const app = await boot();
+  try {
+    const response = await fetch(`${app.endpoint}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: 'https://donetsk2014.github.io'
+      },
+      body: JSON.stringify({
+        customerName: 'Ірина Тестова',
+        phone: '+380 99 123 45 67',
+        contactChannel: 'Viber',
+        quantity: 1,
+        donation: 0,
+        deliveryMode: 'branch',
+        city: 'К',
+        deliveryPoint: ''
+      })
+    });
+    const payload = await response.json();
+    assert.equal(response.status, 422);
+    assert.match(payload.error, /місто доставки/);
   } finally {
     await app.close();
   }

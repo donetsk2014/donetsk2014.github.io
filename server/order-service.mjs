@@ -116,9 +116,11 @@ function createStore(file) {
     async add(order) {
       const operation = queue.then(async () => {
         const state = await readState();
+        const existing = order.requestId && state.orders.find((item) => item.requestId === order.requestId);
+        if (existing) return { order: existing, created: false };
         state.orders.push(order);
         await writeState(state);
-        return order;
+        return { order, created: true };
       });
       queue = operation.catch(() => undefined);
       return operation;
@@ -287,6 +289,7 @@ function validateOrder(payload, bookPrice) {
     quantity,
     donation,
     total: quantity * bookPrice + donation,
+    requestId: normalizeText(payload.requestId, 80),
     deliveryMode,
     city: '',
     deliveryPoint: '',
@@ -299,9 +302,8 @@ function validateOrder(payload, bookPrice) {
   } else {
     order.city = normalizeText(payload.city, 160);
     order.deliveryPoint = normalizeText(payload.deliveryPoint, 320);
-    if (!order.city || !order.deliveryPoint) {
-      throw new ApiError(422, 'Вкажіть місто та відділення або поштомат.');
-    }
+    if (order.city.length < 2) throw new ApiError(422, 'Вкажіть місто доставки.');
+    if (!order.deliveryPoint) throw new ApiError(422, 'Вкажіть відділення або поштомат.');
   }
 
   return order;
@@ -369,13 +371,15 @@ export function createOrderService(overrides = {}) {
     const order = validateOrder(payload, config.bookPrice);
     if (order.honeypot) return sendJson(response, 201, { ok: true }, corsOrigin);
     if (!limiter.take(getClientIp(request))) throw new ApiError(429, 'Забагато спроб. Спробуйте за кілька хвилин.');
-    await store.add(order);
-    try {
-      await telegram.sendMessage(config.telegramChatId, orderNotification(order));
-    } catch (error) {
-      console.error(`Telegram notification failed for ${order.id}:`, error.message);
+    const saved = await store.add(order);
+    if (saved.created) {
+      try {
+        await telegram.sendMessage(config.telegramChatId, orderNotification(saved.order));
+      } catch (error) {
+        console.error(`Telegram notification failed for ${saved.order.id}:`, error.message);
+      }
     }
-    return sendJson(response, 201, { ok: true, id: order.id }, corsOrigin);
+    return sendJson(response, 201, { ok: true, id: saved.order.id }, corsOrigin);
   }
 
   async function handleTelegramWebhook(request, response, corsOrigin) {

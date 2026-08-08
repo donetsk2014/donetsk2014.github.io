@@ -418,11 +418,11 @@ footer{
         <div class="row two">
           <div>
             <label for="customer_name">Ім’я та прізвище</label>
-            <input type="text" id="customer_name" name="customer_name" required autocomplete="name" placeholder="Як у Новій пошті">
+            <input type="text" id="customer_name" name="customer_name" required minlength="2" autocomplete="name" placeholder="Як у Новій пошті">
           </div>
           <div>
             <label for="phone">Телефон</label>
-            <input type="tel" id="phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="+380 99 123 45 67">
+            <input type="tel" id="phone" name="phone" required pattern="[+()0-9 -]{7,30}" inputmode="tel" autocomplete="tel" placeholder="+380 99 123 45 67" title="Використайте 7-30 цифр та символи + ( ) -">
           </div>
         </div>
 
@@ -448,7 +448,7 @@ footer{
             <div class="row two">
               <div>
                 <label for="np_city">Місто</label>
-                <input type="text" id="np_city" name="np_city" required autocomplete="address-level2" placeholder="Київ">
+                <input type="text" id="np_city" name="np_city" required minlength="2" autocomplete="address-level2" placeholder="Київ">
               </div>
               <div>
                 <label for="delivery_point" id="delivery-point-label">Відділення</label>
@@ -619,14 +619,40 @@ footer{
   var npBlock=document.getElementById('np-block');
   var abroadBlock=document.getElementById('abroad-block');
   var abroadAddress=document.getElementById('abroad_addr');
+  var checkoutRequestId='';
 
   function request(path,options){
-    return fetch(api+path,options).then(function(response){
+    var controller=typeof AbortController==='function'?new AbortController():null;
+    var requestOptions=Object.assign({},options);
+    var timeoutId;
+    if(controller) requestOptions.signal=controller.signal;
+    var timeout=new Promise(function(_,reject){
+      timeoutId=window.setTimeout(function(){
+        if(controller) controller.abort();
+        reject(new Error('Сервіс не відповідає. Спробуйте ще раз.'));
+      },15000);
+    });
+    var response=fetch(api+path,requestOptions).then(function(response){
       return response.json().catch(function(){return {}}).then(function(payload){
         if(!response.ok) throw new Error(payload.error||'Спробуйте ще раз.');
         return payload;
       });
+    }).catch(function(error){
+      if(error&&error.name==='AbortError') throw new Error('Сервіс не відповідає. Спробуйте ще раз.');
+      throw error;
     });
+    return Promise.race([response,timeout]).then(function(payload){
+      window.clearTimeout(timeoutId);
+      return payload;
+    },function(error){
+      window.clearTimeout(timeoutId);
+      throw error;
+    });
+  }
+
+  function createRequestId(){
+    if(window.crypto&&typeof window.crypto.randomUUID==='function') return window.crypto.randomUUID();
+    return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
   }
 
   function selectedMode(){
@@ -673,6 +699,7 @@ footer{
     donation.value=0;
     donationRow.hidden=true;
     donationToggle.setAttribute('aria-expanded','false');
+    checkoutRequestId='';
     updateDeliveryMode();
     refreshTotal();
   }
@@ -702,7 +729,9 @@ footer{
 
     var buttonText=submit.textContent;
     var contactChannel=form.contact_channel.value;
+    if(!checkoutRequestId) checkoutRequestId=createRequestId();
     submit.disabled=true;
+    submit.setAttribute('aria-busy','true');
     submit.textContent='Надсилаємо…';
     setMessage('');
     request('/orders',{
@@ -714,6 +743,7 @@ footer{
         contactChannel:contactChannel,
         quantity:parseInt(qty.value||1,10),
         donation:parseInt(donation.value||0,10)||0,
+        requestId:checkoutRequestId,
         deliveryMode:mode,
         city:cityInput.value,
         deliveryPoint:pointInput.value,
@@ -722,11 +752,13 @@ footer{
       })
     }).then(function(data){
       resetCheckout();
-      setMessage('Замовлення '+data.id+' прийнято. Реквізити надішлемо у '+contactChannel+'.','ok');
+      var confirmation=data.id?'Замовлення '+data.id+' прийнято.':'Заявку прийнято.';
+      setMessage(confirmation+' Реквізити надішлемо у '+contactChannel+'.','ok');
     }).catch(function(error){
       setMessage(error.message||'Не вдалося надіслати. Спробуйте ще раз.','err');
     }).then(function(){
       submit.disabled=false;
+      submit.removeAttribute('aria-busy');
       submit.textContent=buttonText;
     });
   });
